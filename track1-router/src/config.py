@@ -16,7 +16,7 @@ def _csv_env(name: str, default: tuple[str, ...]) -> tuple[str, ...]:
 
 TASK_INPUT_PATH = os.getenv("TASK_INPUT_PATH", "/input/tasks.json")
 RESULTS_OUTPUT_PATH = os.getenv("RESULTS_OUTPUT_PATH", "/output/results.json")
-RESULTS_SCHEMA_STYLE = os.getenv("RESULTS_SCHEMA_STYLE", "mapping")
+RESULTS_SCHEMA_STYLE = os.getenv("RESULTS_SCHEMA_STYLE", "list")
 
 FIREWORKS_BASE_URL = os.getenv("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1")
 FIREWORKS_API_KEY_ENV = os.getenv("FIREWORKS_API_KEY_ENV", "FIREWORKS_API_KEY")
@@ -73,4 +73,3 @@ FALLBACK_ANSWERS: dict[str, Any] = {
     "code generation": "",
     "unknown": "",
 }
-

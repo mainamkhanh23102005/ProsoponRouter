@@ -45,12 +45,12 @@ class EndToEndTest(unittest.TestCase):
                         os.environ[key] = value
 
             results = json.loads(output_path.read_text(encoding="utf-8"))
-            self.assertEqual(set(results), {"m", "s", "n", "u"})
-            self.assertEqual(results["m"], "5")
-            self.assertEqual(results["s"], "positive")
-            self.assertIsInstance(results["n"], list)
+            answer_by_id = {item["id"]: item["answer"] for item in results}
+            self.assertEqual(set(answer_by_id), {"m", "s", "n", "u"})
+            self.assertEqual(answer_by_id["m"], "5")
+            self.assertEqual(answer_by_id["s"], "positive")
+            self.assertIsInstance(answer_by_id["n"], list)
 
 
 if __name__ == "__main__":
     unittest.main()
-
