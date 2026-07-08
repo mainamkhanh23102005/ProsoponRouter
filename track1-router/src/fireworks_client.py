@@ -32,7 +32,7 @@ class FireworksClient:
         prompt = build_prompt(task, category)
 
         if config.DRY_RUN:
-            return FireworksResult(answer=dry_run_answer(task, category), prompt_tokens=0, completion_tokens=0)
+            return dry_run_result(task, category)
 
         api_key = os.getenv(config.FIREWORKS_API_KEY_ENV)
         if not api_key:
@@ -97,13 +97,37 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
     return f"Answer only, no explanation.\n{text}"
 
 
-def dry_run_answer(task: dict[str, Any], category: str) -> Any:
+def dry_run_result(task: dict[str, Any], category: str) -> FireworksResult:
+    if config.DRY_RUN_MODE == "error":
+        return FireworksResult(answer=None, error="dry-run simulated API error")
+    if config.DRY_RUN_MODE == "invalid":
+        return FireworksResult(answer=dry_run_invalid_answer(category), prompt_tokens=0, completion_tokens=0)
+    return FireworksResult(answer=dry_run_success_answer(task, category), prompt_tokens=0, completion_tokens=0)
+
+
+def dry_run_success_answer(task: dict[str, Any], category: str) -> Any:
     if category == "sentiment":
-        return "neutral: dry-run fallback without sentiment evidence"
+        return "neutral: dry-run sentiment placeholder"
     if category == "ner":
-        return []
+        return "PERSON: Sarah Johnson; ORG: Microsoft; LOCATION: Seattle; DATE: 2026-07-11"
     if category == "math":
         return "0"
+    if category == "summarization":
+        return "AMD hackathon teams build token-efficient AI apps."
+    if category == "code debugging":
+        return "def add(a, b):\n    return a + b"
+    if category == "code generation":
+        return "def larger(a, b):\n    return a if a >= b else b"
     if category == "logical reasoning":
         return "yes"
+    if category == "factual knowledge":
+        return "Hanoi"
     return "DRY_RUN"
+
+
+def dry_run_invalid_answer(category: str) -> Any:
+    if category in {"sentiment", "math", "summarization", "factual knowledge", "code debugging", "code generation", "logical reasoning"}:
+        return ""
+    if category == "ner":
+        return []
+    return ""
