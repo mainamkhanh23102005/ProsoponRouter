@@ -61,7 +61,9 @@ def run(input_path: Path, output_path: Path) -> int:
             meta = {"path": "fallback", "tokens": 0, "error": str(exc)}
         answers[current_id] = answer
         print(
-            f"task_id={current_id} category={category} path={meta.get('path')} tokens={meta.get('tokens', 0)}",
+            f"task_id={current_id} category={category} path={meta.get('path')} "
+            f"tokens={meta.get('tokens', 0)} attempts={meta.get('attempts', 1)} "
+            f"retried={meta.get('retried', False)}",
             file=sys.stderr,
         )
 
