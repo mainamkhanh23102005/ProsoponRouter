@@ -4,9 +4,11 @@
 - [x] Add config-isolated unknown hackathon facts
 - [x] Add DRY_RUN Fireworks client
 - [x] Add end-to-end local test
+- [x] Add real sample task/result schemas
+- [x] Expand deterministic solver tests
+- [x] Build starter eval dataset for math/sentiment/NER
+- [x] Re-add spaCy for official PERSON/ORG/LOCATION NER with `click>=8.0.0` pinned
+- [x] Run Docker build and container smoke test
+- [x] Formally keep factual, logic, and code solver stubs escalation-only
 - [ ] Fill official participant facts in `src/config.py` or `.env`
-- [ ] Add real sample task/result schemas
-- [ ] Expand deterministic solver tests
-- [ ] Build eval dataset and policy tuning loop
-- [ ] Re-add spaCy only if Phase 4 eval shows regex-only NER isn't clearing the accuracy threshold - if re-added, pin `click>=8.0.0` explicitly in `requirements.txt` to avoid the typer-slim resolution issue.
-- [ ] Run Docker build and container smoke test
+- [ ] Replace placeholder `ALLOWED_MODELS` / `CHEAPEST_MODEL` once official allowed model IDs are known

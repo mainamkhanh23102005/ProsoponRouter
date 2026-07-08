@@ -82,7 +82,7 @@ The initial policy is conservative until the eval harness proves free-path accur
 | sentiment | VADER plus conservative rules | enabled | Current dev set is 15/15; mixed strong signals, sarcasm markers, empty text, and gibberish escalate instead of forcing labels. |
 | ner | spaCy PERSON/ORG/LOCATION plus regex DATE | enabled | Current Docker eval is 15/15 against official entity labels; EMAIL/MONEY/PERCENT are intentionally out of scope. |
 | summarization | disabled until dev-gated | Fireworks | Extractive summaries are not enabled without measured accuracy. |
-| factual knowledge | disabled except trivial future cases | Fireworks | Free factual answering risks silent wrong answers. |
-| code debugging | disabled until validated | Fireworks | Local code analysis remains a future gated path. |
-| code generation | disabled | Fireworks | No reliable deterministic generation path. |
-| logical reasoning | disabled until finite-domain patterns exist | Fireworks | Free reasoning is only safe for recognizable finite-domain forms. |
+| factual knowledge | none | Fireworks | Permanent escalation-only: free factual answering risks silent wrong answers without an authoritative local knowledge base. |
+| code debugging | none | Fireworks | Permanent escalation-only: deterministic local code is used only to validate model answers after the call, not to infer fixes. |
+| code generation | none | Fireworks | Permanent escalation-only: no reliable deterministic generation path. |
+| logical reasoning | none | Fireworks | Permanent escalation-only unless a future prompt family is explicitly approved for narrow finite-domain brute force. |
