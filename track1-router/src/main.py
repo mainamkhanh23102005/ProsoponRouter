@@ -45,6 +45,7 @@ def run(input_path: Path, output_path: Path) -> int:
     answers: dict[str, Any] = {}
     tasks = load_tasks(input_path)
     started_at = time.monotonic()
+    log_startup_config()
 
     for index, task in enumerate(tasks):
         current_id = task_id(task, index)
@@ -63,12 +64,22 @@ def run(input_path: Path, output_path: Path) -> int:
         print(
             f"task_id={current_id} category={category} path={meta.get('path')} "
             f"tokens={meta.get('tokens', 0)} attempts={meta.get('attempts', 1)} "
-            f"retried={meta.get('retried', False)}",
+            f"retried={meta.get('retried', False)} error={meta.get('error')}",
             file=sys.stderr,
         )
 
     atomic_write_json(output_path, format_results(answers))
     return 0
+
+
+def log_startup_config() -> None:
+    api_key_set = bool(os.getenv(config.FIREWORKS_API_KEY_ENV))
+    allowed_models = ",".join(config.ALLOWED_MODELS)
+    print(
+        f"startup api_key_env={config.FIREWORKS_API_KEY_ENV} api_key_set={api_key_set} "
+        f"fireworks_base_url={config.FIREWORKS_BASE_URL} allowed_models={allowed_models}",
+        file=sys.stderr,
+    )
 
 
 def watchdog_expired(started_at: float) -> bool:

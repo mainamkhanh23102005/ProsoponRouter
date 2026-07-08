@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -75,11 +76,29 @@ class FireworksClient:
                 self.total_tokens += result.total_tokens
                 return result
             except Exception as exc:  # noqa: BLE001 - final fallback must not crash the run.
-                last_error = str(exc)
+                last_error = sanitize_error(str(exc))
                 if attempt == 0:
                     time.sleep(0.5)
 
         return FireworksResult(answer=None, error=last_error)
+
+
+def sanitize_error(error: str) -> str:
+    sanitized = error
+    api_key = os.getenv(config.FIREWORKS_API_KEY_ENV)
+    if api_key:
+        sanitized = sanitized.replace(api_key, "[REDACTED_API_KEY]")
+    sanitized = re.sub(
+        r"(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+",
+        r"\1[REDACTED_API_KEY]",
+        sanitized,
+    )
+    sanitized = re.sub(
+        r"(?i)(api[_-]?key\s*[:=]\s*)[^\s,;]+",
+        r"\1[REDACTED_API_KEY]",
+        sanitized,
+    )
+    return sanitized
 
 
 def build_prompt(task: dict[str, Any], category: str) -> str:
