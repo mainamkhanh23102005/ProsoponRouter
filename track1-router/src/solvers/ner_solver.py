@@ -19,7 +19,7 @@ SPACY_LABELS = {
 }
 
 
-def solve(task: dict[str, Any]) -> tuple[list[dict[str, str]] | None, float]:
+def solve(task: dict[str, Any]) -> tuple[str | None, float]:
     text = task_text(task)
     entities: list[tuple[int, int, dict[str, str]]] = []
 
@@ -35,9 +35,9 @@ def solve(task: dict[str, Any]) -> tuple[list[dict[str, str]] | None, float]:
             entities.append((ent.start_char, ent.end_char, {"text": ent.text, "label": label}))
 
     if not entities:
-        return [], 0.92
+        return "NONE", 0.92
     entities.sort(key=lambda item: (item[0], item[1]))
-    return [entity for _, _, entity in entities], 0.92
+    return format_entities([entity for _, _, entity in entities]), 0.92
 
 
 @lru_cache(maxsize=1)
@@ -52,3 +52,7 @@ def load_spacy_model() -> Any | None:
 
 def overlaps_existing(start: int, end: int, entities: list[tuple[int, int, dict[str, str]]]) -> bool:
     return any(start < existing_end and end > existing_start for existing_start, existing_end, _ in entities)
+
+
+def format_entities(entities: list[dict[str, str]]) -> str:
+    return "; ".join(f"{entity['label']}: {entity['text']}" for entity in entities)

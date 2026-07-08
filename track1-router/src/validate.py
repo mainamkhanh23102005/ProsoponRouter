@@ -17,7 +17,7 @@ def validate_answer(category: str, answer: Any) -> bool:
         lowered = answer.strip().lower()
         return any(lowered.startswith(f"{label}: ") for label in SENTIMENT_LABELS)
     if category == "ner":
-        return isinstance(answer, (list, dict, str))
+        return isinstance(answer, str)
     if category == "math":
         return isinstance(answer, (int, float, str)) and str(answer).strip() != ""
     return str(answer).strip() != ""

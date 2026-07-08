@@ -51,7 +51,7 @@ class EndToEndTest(unittest.TestCase):
             self.assertEqual(set(answer_by_id), {"m", "s", "n", "u"})
             self.assertEqual(answer_by_id["m"], "5")
             self.assertTrue(answer_by_id["s"].startswith("positive: "), answer_by_id["s"])
-            self.assertIsInstance(answer_by_id["n"], list)
+            self.assertIsInstance(answer_by_id["n"], str)
 
 
 if __name__ == "__main__":

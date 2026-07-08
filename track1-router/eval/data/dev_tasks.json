@@ -183,284 +183,90 @@
     "id": "ner-dev-001",
     "category": "ner",
     "text": "Barack Obama visited Paris on 2026-07-11.",
-    "answer": [
-      {
-        "text": "Barack Obama",
-        "label": "PERSON"
-      },
-      {
-        "text": "Paris",
-        "label": "LOCATION"
-      },
-      {
-        "text": "2026-07-11",
-        "label": "DATE"
-      }
-    ]
+    "answer": "PERSON: Barack Obama; LOCATION: Paris; DATE: 2026-07-11"
   },
   {
     "id": "ner-dev-002",
     "category": "ner",
     "text": "Microsoft opened a research office in London.",
-    "answer": [
-      {
-        "text": "Microsoft",
-        "label": "ORG"
-      },
-      {
-        "text": "London",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "ORG: Microsoft; LOCATION: London"
   },
   {
     "id": "ner-dev-003",
     "category": "ner",
     "text": "Sundar Pichai and Tim Cook spoke for Google in New York.",
-    "answer": [
-      {
-        "text": "Sundar Pichai",
-        "label": "PERSON"
-      },
-      {
-        "text": "Tim Cook",
-        "label": "PERSON"
-      },
-      {
-        "text": "Google",
-        "label": "ORG"
-      },
-      {
-        "text": "New York",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "PERSON: Sundar Pichai; PERSON: Tim Cook; ORG: Google; LOCATION: New York"
   },
   {
     "id": "ner-dev-004",
     "category": "ner",
     "text": "Elon Musk announced Tesla's plan in Berlin on 07/08/2026.",
-    "answer": [
-      {
-        "text": "Elon Musk",
-        "label": "PERSON"
-      },
-      {
-        "text": "Tesla",
-        "label": "ORG"
-      },
-      {
-        "text": "Berlin",
-        "label": "LOCATION"
-      },
-      {
-        "text": "07/08/2026",
-        "label": "DATE"
-      }
-    ]
+    "answer": "PERSON: Elon Musk; ORG: Tesla; LOCATION: Berlin; DATE: 07/08/2026"
   },
   {
     "id": "ner-dev-005",
     "category": "ner",
     "text": "Tim Cook met Apple engineers in California on 2026-08-01.",
-    "answer": [
-      {
-        "text": "Tim Cook",
-        "label": "PERSON"
-      },
-      {
-        "text": "Apple",
-        "label": "ORG"
-      },
-      {
-        "text": "California",
-        "label": "LOCATION"
-      },
-      {
-        "text": "2026-08-01",
-        "label": "DATE"
-      }
-    ]
+    "answer": "PERSON: Tim Cook; ORG: Apple; LOCATION: California; DATE: 2026-08-01"
   },
   {
     "id": "ner-dev-006",
     "category": "ner",
     "text": "Amazon hired Alice Johnson in Seattle.",
-    "answer": [
-      {
-        "text": "Amazon",
-        "label": "ORG"
-      },
-      {
-        "text": "Alice Johnson",
-        "label": "PERSON"
-      },
-      {
-        "text": "Seattle",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "ORG: Amazon; PERSON: Alice Johnson; LOCATION: Seattle"
   },
   {
     "id": "ner-dev-007",
     "category": "ner",
     "text": "The United Nations held talks in Geneva.",
-    "answer": [
-      {
-        "text": "The United Nations",
-        "label": "ORG"
-      },
-      {
-        "text": "Geneva",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "ORG: The United Nations; LOCATION: Geneva"
   },
   {
     "id": "ner-dev-008",
     "category": "ner",
     "text": "IBM invited Maria Garcia to Tokyo for 12/31/2026.",
-    "answer": [
-      {
-        "text": "IBM",
-        "label": "ORG"
-      },
-      {
-        "text": "Maria Garcia",
-        "label": "PERSON"
-      },
-      {
-        "text": "Tokyo",
-        "label": "LOCATION"
-      },
-      {
-        "text": "12/31/2026",
-        "label": "DATE"
-      }
-    ]
+    "answer": "ORG: IBM; PERSON: Maria Garcia; LOCATION: Tokyo; DATE: 12/31/2026"
   },
   {
     "id": "ner-dev-009",
     "category": "ner",
     "text": "Mark Zuckerberg spoke at Microsoft in Dublin.",
-    "answer": [
-      {
-        "text": "Mark Zuckerberg",
-        "label": "PERSON"
-      },
-      {
-        "text": "Microsoft",
-        "label": "ORG"
-      },
-      {
-        "text": "Dublin",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "PERSON: Mark Zuckerberg; ORG: Microsoft; LOCATION: Dublin"
   },
   {
     "id": "ner-dev-010",
     "category": "ner",
     "text": "Angela Merkel traveled from Germany to Brussels.",
-    "answer": [
-      {
-        "text": "Angela Merkel",
-        "label": "PERSON"
-      },
-      {
-        "text": "Germany",
-        "label": "LOCATION"
-      },
-      {
-        "text": "Brussels",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "PERSON: Angela Merkel; LOCATION: Germany; LOCATION: Brussels"
   },
   {
     "id": "ner-dev-011",
     "category": "ner",
     "text": "Netflix released the feature in Canada on 2026-12-24.",
-    "answer": [
-      {
-        "text": "Netflix",
-        "label": "ORG"
-      },
-      {
-        "text": "Canada",
-        "label": "LOCATION"
-      },
-      {
-        "text": "2026-12-24",
-        "label": "DATE"
-      }
-    ]
+    "answer": "ORG: Netflix; LOCATION: Canada; DATE: 2026-12-24"
   },
   {
     "id": "ner-dev-012",
     "category": "ner",
     "text": "Serena Williams joined Nike for an event in Melbourne.",
-    "answer": [
-      {
-        "text": "Serena Williams",
-        "label": "PERSON"
-      },
-      {
-        "text": "Nike",
-        "label": "ORG"
-      },
-      {
-        "text": "Melbourne",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "PERSON: Serena Williams; ORG: Nike; LOCATION: Melbourne"
   },
   {
     "id": "ner-dev-013",
     "category": "ner",
     "text": "The dashboard loaded after three seconds.",
-    "answer": []
+    "answer": "NONE"
   },
   {
     "id": "ner-dev-014",
     "category": "ner",
     "text": "Google and Microsoft signed a deal in Singapore.",
-    "answer": [
-      {
-        "text": "Google",
-        "label": "ORG"
-      },
-      {
-        "text": "Microsoft",
-        "label": "ORG"
-      },
-      {
-        "text": "Singapore",
-        "label": "LOCATION"
-      }
-    ]
+    "answer": "ORG: Google; ORG: Microsoft; LOCATION: Singapore"
   },
   {
     "id": "ner-dev-015",
     "category": "ner",
     "text": "Lisa Chen met IBM in Boston on 2026-09-09.",
-    "answer": [
-      {
-        "text": "Lisa Chen",
-        "label": "PERSON"
-      },
-      {
-        "text": "IBM",
-        "label": "ORG"
-      },
-      {
-        "text": "Boston",
-        "label": "LOCATION"
-      },
-      {
-        "text": "2026-09-09",
-        "label": "DATE"
-      }
-    ]
+    "answer": "PERSON: Lisa Chen; ORG: IBM; LOCATION: Boston; DATE: 2026-09-09"
   }
 ]
