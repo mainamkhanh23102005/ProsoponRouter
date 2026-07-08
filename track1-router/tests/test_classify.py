@@ -24,7 +24,12 @@ class ClassifyTest(unittest.TestCase):
     def test_math_request_is_classified(self) -> None:
         self.assertEqual(classify({"text": "Calculate 7 + 5 for the total."}), "math")
 
+    def test_factual_request_is_classified(self) -> None:
+        self.assertEqual(
+            classify({"prompt": "Answer this factual knowledge question: What is the capital of Vietnam?"}),
+            "factual knowledge",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
-

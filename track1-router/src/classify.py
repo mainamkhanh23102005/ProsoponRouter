@@ -57,6 +57,8 @@ def classify(task: dict[str, Any]) -> str:
         return "code debugging"
     if re.search(r"\b(write|implement|create)\b.{0,40}\b(function|class|program|script)\b", text):
         return "code generation"
+    if re.search(r"\b(factual knowledge|factual question)\b", text):
+        return "factual knowledge"
     if re.search(r"\b(if all|therefore|must be|can be true|logic)\b", text):
         return "logical reasoning"
     if re.search(r"\b(calculate|compute|evaluate|what is|what's)\b.{0,40}\d+\s*[-+*/%^]\s*\d+", text):
