@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import sys
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -54,17 +55,36 @@ class FireworksClient:
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
         last_error = None
+        prompt_tokens = 0
+        completion_tokens = 0
         for attempt in range(2):
             try:
                 response = requests.post(url, headers=headers, json=payload, timeout=config.HTTP_TIMEOUT_SECONDS)
                 response.raise_for_status()
                 data = response.json()
-                content = data["choices"][0]["message"]["content"].strip()
+                message = data["choices"][0]["message"]
+                content, content_error = extract_message_content(message)
                 usage = data.get("usage", {})
+                prompt_tokens += int(usage.get("prompt_tokens", 0) or 0)
+                completion_tokens += int(usage.get("completion_tokens", 0) or 0)
+                if content_error:
+                    last_error = content_error
+                    print(content_error, file=sys.stderr)
+                    if attempt == 0:
+                        time.sleep(0.5)
+                        continue
+                    result = FireworksResult(
+                        answer="",
+                        prompt_tokens=prompt_tokens,
+                        completion_tokens=completion_tokens,
+                        error=content_error,
+                    )
+                    self.total_tokens += result.total_tokens
+                    return result
                 result = FireworksResult(
                     answer=content,
-                    prompt_tokens=int(usage.get("prompt_tokens", 0) or 0),
-                    completion_tokens=int(usage.get("completion_tokens", 0) or 0),
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
                 )
                 self.total_tokens += result.total_tokens
                 return result
@@ -73,7 +93,22 @@ class FireworksClient:
                 if attempt == 0:
                     time.sleep(0.5)
 
-        return FireworksResult(answer=None, error=last_error)
+        return FireworksResult(
+            answer=None,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            error=last_error,
+        )
+
+
+def extract_message_content(message: dict[str, Any]) -> tuple[str, str | None]:
+    content = message.get("content")
+    if not str(content or "").strip():
+        content = message.get("reasoning_content")
+    if not str(content or "").strip():
+        keys = list(message.keys())
+        return "", f"empty content, message keys were: {keys}"
+    return str(content).strip(), None
 
 
 def sanitize_error(error: str) -> str:

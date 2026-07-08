@@ -7,13 +7,19 @@ from src.fireworks_client import FireworksResult
 
 
 class FakeClient:
-    def __init__(self, answers: list[str]) -> None:
+    def __init__(self, answers: list[str], errors: list[str | None] | None = None) -> None:
         self.answers = answers
+        self.errors = errors or [None] * len(answers)
         self.retry_feedback: list[str | None] = []
 
     def complete(self, task, category, retry_feedback=None):
         self.retry_feedback.append(retry_feedback)
-        return FireworksResult(answer=self.answers.pop(0), prompt_tokens=0, completion_tokens=0)
+        return FireworksResult(
+            answer=self.answers.pop(0),
+            prompt_tokens=0,
+            completion_tokens=0,
+            error=self.errors.pop(0),
+        )
 
 
 class CodeRetryTest(unittest.TestCase):
@@ -71,6 +77,19 @@ class CodeRetryTest(unittest.TestCase):
         self.assertEqual(answer, "def add(a, b):\n    return a + b")
         self.assertEqual(meta["path"], "fireworks_retry")
         self.assertIn("AssertionError", fake.retry_feedback[1] or "")
+
+    def test_empty_content_failure_does_not_trigger_code_semantic_retry(self) -> None:
+        fake = FakeClient([""], ["empty content, message keys were: ['role']"])
+        cascade.CLIENT = fake
+        answer, meta = cascade.route_task(
+            {"prompt": "Write a Python function add(a, b)."},
+            "code generation",
+        )
+        self.assertEqual(answer, "")
+        self.assertEqual(meta["path"], "fallback")
+        self.assertEqual(meta["attempts"], 1)
+        self.assertFalse(meta["retried"])
+        self.assertEqual(fake.retry_feedback, [None])
 
 
 if __name__ == "__main__":

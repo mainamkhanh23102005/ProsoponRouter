@@ -48,8 +48,8 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
         }
 
     total_tokens = result.total_tokens
-    if result.answer is not None and policy.retry_on_invalid:
-        retry_feedback = failure_feedback or f"expected {category} answer format; got {result.answer!r}"
+    if result.answer is not None and policy.retry_on_invalid and not is_empty_content_error(result.error):
+        retry_feedback = result.error or failure_feedback or f"expected {category} answer format; got {result.answer!r}"
         retry_result = CLIENT.complete(task, category, retry_feedback=retry_feedback)
         total_tokens += retry_result.total_tokens
         retry_ok, retry_answer, retry_failure_feedback = validate_model_answer(task, category, retry_result.answer)
@@ -69,10 +69,14 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
     return fallback, {
         "path": "fallback",
         "tokens": total_tokens,
-        "attempts": 2 if result.answer is not None and policy.retry_on_invalid else 1,
-        "retried": bool(result.answer is not None and policy.retry_on_invalid),
+        "attempts": 2 if result.answer is not None and policy.retry_on_invalid and not is_empty_content_error(result.error) else 1,
+        "retried": bool(result.answer is not None and policy.retry_on_invalid and not is_empty_content_error(result.error)),
         "error": retry_error,
     }
+
+
+def is_empty_content_error(error: str | None) -> bool:
+    return bool(error and error.startswith("empty content, message keys were:"))
 
 
 def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> tuple[bool, Any, str | None]:
