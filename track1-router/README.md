@@ -76,14 +76,13 @@ flowchart LR
 
 The initial policy is conservative until the eval harness proves free-path accuracy:
 
-| Category | Free path | Default |
-| --- | --- | --- |
-| math | safe arithmetic parser | enabled |
-| sentiment | VADER or small fallback lexicon | enabled |
-| ner | regex extraction for emails, dates, money, percent | enabled |
-| summarization | disabled until dev-gated | Fireworks |
-| factual knowledge | disabled except trivial future cases | Fireworks |
-| code debugging | disabled until validated | Fireworks |
-| code generation | disabled | Fireworks |
-| logical reasoning | disabled until finite-domain patterns exist | Fireworks |
-
+| Category | Free path | Default | Justification |
+| --- | --- | --- | --- |
+| math | safe arithmetic parser | enabled | Current dev set is 15/15 after regression fixes; ambiguous comparison questions still escalate. |
+| sentiment | VADER plus conservative rules | enabled | Current dev set is 15/15; mixed strong signals, sarcasm markers, empty text, and gibberish escalate instead of forcing labels. |
+| ner | spaCy PERSON/ORG/LOCATION plus regex DATE | enabled | Current Docker eval is 15/15 against official entity labels; EMAIL/MONEY/PERCENT are intentionally out of scope. |
+| summarization | disabled until dev-gated | Fireworks | Extractive summaries are not enabled without measured accuracy. |
+| factual knowledge | disabled except trivial future cases | Fireworks | Free factual answering risks silent wrong answers. |
+| code debugging | disabled until validated | Fireworks | Local code analysis remains a future gated path. |
+| code generation | disabled | Fireworks | No reliable deterministic generation path. |
+| logical reasoning | disabled until finite-domain patterns exist | Fireworks | Free reasoning is only safe for recognizable finite-domain forms. |
