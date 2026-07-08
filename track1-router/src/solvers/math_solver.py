@@ -43,12 +43,19 @@ def extract_expression(text: str) -> str | None:
     word_expression = extract_word_expression(text)
     if word_expression:
         return word_expression
-    candidates = re.findall(r"[-+*/().\d\s^]+", text)
-    candidates = [item.strip().replace("^", "**") for item in candidates if re.search(r"\d", item)]
-    candidates = [item for item in candidates if re.search(r"[-+*/]", item)]
+    candidates = re.findall(r"[-+*/%().\d\s^]+", text)
+    candidates = [normalize_expression(item) for item in candidates if re.search(r"\d", item)]
+    candidates = [item for item in candidates if re.search(r"[-+*/%]", item)]
     if len(candidates) != 1:
         return None
     return candidates[0]
+
+
+def normalize_expression(expression: str) -> str:
+    expression = expression.strip().replace("^", "**")
+    while expression.endswith((".", "?")):
+        expression = expression[:-1].rstrip()
+    return expression
 
 
 def is_relation_question(text: str) -> bool:

@@ -52,7 +52,12 @@ class MathSolverTest(unittest.TestCase):
     def test_decimal_result(self) -> None:
         self.assert_answer("10 / 4", "2.5")
 
+    def test_trailing_sentence_period_after_parenthesized_expression(self) -> None:
+        self.assert_answer("Calculate 7 + (6 * 5).", "37")
+
+    def test_percent_symbol_modulo(self) -> None:
+        self.assert_answer("Calculate 45 % 6.", "3")
+
 
 if __name__ == "__main__":
     unittest.main()
-
