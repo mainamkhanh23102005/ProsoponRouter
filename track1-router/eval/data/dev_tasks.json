@@ -1,28 +1,406 @@
 [
   {
-    "id": "math-dev-1",
+    "id": "math-dev-001",
     "category": "math",
-    "question": "What is 10 / 2 + 7?",
+    "question": "For the usage report, what is 18 + 7 * 2?",
+    "answer": "32"
+  },
+  {
+    "id": "math-dev-002",
+    "category": "math",
+    "question": "Compute 42 / 6 + 5 before entering the score.",
     "answer": "12"
   },
   {
-    "id": "sent-dev-1",
+    "id": "math-dev-003",
+    "category": "math",
+    "question": "What is half of 24 minus 5?",
+    "answer": "7"
+  },
+  {
+    "id": "math-dev-004",
+    "category": "math",
+    "question": "Add 8 and 4, then multiply by 3",
+    "answer": "36"
+  },
+  {
+    "id": "math-dev-005",
+    "category": "math",
+    "question": "What's 120 divided by 3, divided by 4?",
+    "answer": "10"
+  },
+  {
+    "id": "math-dev-006",
+    "category": "math",
+    "question": "What is 9 mod 4?",
+    "answer": "1"
+  },
+  {
+    "id": "math-dev-007",
+    "category": "math",
+    "question": "Please calculate 2^8 for the batch size.",
+    "answer": "256"
+  },
+  {
+    "id": "math-dev-008",
+    "category": "math",
+    "question": "Evaluate 3**4.",
+    "answer": "81"
+  },
+  {
+    "id": "math-dev-009",
+    "category": "math",
+    "question": "The adjustment is 5 - 12. What is the result?",
+    "answer": "-7"
+  },
+  {
+    "id": "math-dev-010",
+    "category": "math",
+    "question": "What does 15 / 4 equal as a decimal value?",
+    "answer": "3.75"
+  },
+  {
+    "id": "math-dev-011",
+    "category": "math",
+    "question": "Calculate 7 + (6 * 5).",
+    "answer": "37"
+  },
+  {
+    "id": "math-dev-012",
+    "category": "math",
+    "question": "What is 20 - -4?",
+    "answer": "24"
+  },
+  {
+    "id": "math-dev-013",
+    "category": "math",
+    "question": "For the invoice check, compute 100 // 9.",
+    "answer": "11"
+  },
+  {
+    "id": "math-dev-014",
+    "category": "math",
+    "question": "What is (8 + 2) * (6 - 1)?",
+    "answer": "50"
+  },
+  {
+    "id": "math-dev-015",
+    "category": "math",
+    "question": "Calculate 45 % 6.",
+    "answer": "3"
+  },
+  {
+    "id": "sent-dev-001",
     "category": "sentiment",
-    "text": "The tool is excellent and useful.",
+    "text": "The dashboard is excellent, fast, and useful for daily checks.",
     "answer": "positive"
   },
   {
-    "id": "ner-dev-1",
+    "id": "sent-dev-002",
+    "category": "sentiment",
+    "text": "The export flow is terrible and painfully slow.",
+    "answer": "negative"
+  },
+  {
+    "id": "sent-dev-003",
+    "category": "sentiment",
+    "text": "The meeting is at 3pm on Tuesday in room 204.",
+    "answer": "neutral"
+  },
+  {
+    "id": "sent-dev-004",
+    "category": "sentiment",
+    "text": "The fix is not bad at all after the latest patch.",
+    "answer": "positive"
+  },
+  {
+    "id": "sent-dev-005",
+    "category": "sentiment",
+    "text": "The new layout is not good for quick scanning.",
+    "answer": "negative"
+  },
+  {
+    "id": "sent-dev-006",
+    "category": "sentiment",
+    "text": "The movie was neither good nor bad.",
+    "answer": "neutral"
+  },
+  {
+    "id": "sent-dev-007",
+    "category": "sentiment",
+    "text": "I love the clear filters and the fast response time.",
+    "answer": "positive"
+  },
+  {
+    "id": "sent-dev-008",
+    "category": "sentiment",
+    "text": "I hate the broken chart because it keeps showing awful values.",
+    "answer": "negative"
+  },
+  {
+    "id": "sent-dev-009",
+    "category": "sentiment",
+    "text": "The appointment is on Monday at 10am.",
+    "answer": "neutral"
+  },
+  {
+    "id": "sent-dev-010",
+    "category": "sentiment",
+    "text": "The tool is great for summaries and excellent for quick reviews.",
+    "answer": "positive"
+  },
+  {
+    "id": "sent-dev-011",
+    "category": "sentiment",
+    "text": "The report generator is poor, slow, and broken.",
+    "answer": "negative"
+  },
+  {
+    "id": "sent-dev-012",
+    "category": "sentiment",
+    "text": "Room 18 is reserved on Friday.",
+    "answer": "neutral"
+  },
+  {
+    "id": "sent-dev-013",
+    "category": "sentiment",
+    "text": "The assistant gave the best answer and a useful explanation.",
+    "answer": "positive"
+  },
+  {
+    "id": "sent-dev-014",
+    "category": "sentiment",
+    "text": "The checkout experience was the worst and the support was terrible.",
+    "answer": "negative"
+  },
+  {
+    "id": "sent-dev-015",
+    "category": "sentiment",
+    "text": "The file was uploaded at 7pm on Wednesday.",
+    "answer": "neutral"
+  },
+  {
+    "id": "ner-dev-001",
     "category": "ner",
-    "text": "Email a@b.com by 2026-07-11.",
+    "text": "Email dan@example.com by 2026-07-11.",
     "answer": [
       {
-        "text": "a@b.com",
+        "text": "dan@example.com",
         "label": "EMAIL"
       },
       {
         "text": "2026-07-11",
         "label": "DATE"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-002",
+    "category": "ner",
+    "text": "Send the receipt to finance@startup.io and cc ops@startup.io.",
+    "answer": [
+      {
+        "text": "finance@startup.io",
+        "label": "EMAIL"
+      },
+      {
+        "text": "ops@startup.io",
+        "label": "EMAIL"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-003",
+    "category": "ner",
+    "text": "The invoice total is $1,200.00 after a 15% discount.",
+    "answer": [
+      {
+        "text": "$1,200.00",
+        "label": "MONEY"
+      },
+      {
+        "text": "15%",
+        "label": "PERCENT"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-004",
+    "category": "ner",
+    "text": "Schedule the review for 07/08/2026 and notify lead@demo.dev.",
+    "answer": [
+      {
+        "text": "07/08/2026",
+        "label": "DATE"
+      },
+      {
+        "text": "lead@demo.dev",
+        "label": "EMAIL"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-005",
+    "category": "ner",
+    "text": "USD 75 is due on 2026-08-01.",
+    "answer": [
+      {
+        "text": "USD 75",
+        "label": "MONEY"
+      },
+      {
+        "text": "2026-08-01",
+        "label": "DATE"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-006",
+    "category": "ner",
+    "text": "Meeting on 2026-07-11 at 3pm, email dan@example.com, cost $25.50 (25% discount).",
+    "answer": [
+      {
+        "text": "2026-07-11",
+        "label": "DATE"
+      },
+      {
+        "text": "dan@example.com",
+        "label": "EMAIL"
+      },
+      {
+        "text": "$25.50",
+        "label": "MONEY"
+      },
+      {
+        "text": "25%",
+        "label": "PERCENT"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-007",
+    "category": "ner",
+    "text": "The campaign reached 99.5% completion.",
+    "answer": [
+      {
+        "text": "99.5%",
+        "label": "PERCENT"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-008",
+    "category": "ner",
+    "text": "Pay $0.99 for the trial and renew on 12/31/2026.",
+    "answer": [
+      {
+        "text": "$0.99",
+        "label": "MONEY"
+      },
+      {
+        "text": "12/31/2026",
+        "label": "DATE"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-009",
+    "category": "ner",
+    "text": "Forward logs to qa-team+alerts@example.co.uk.",
+    "answer": [
+      {
+        "text": "qa-team+alerts@example.co.uk",
+        "label": "EMAIL"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-010",
+    "category": "ner",
+    "text": "The service fee is USD 12.50, with 5% tax.",
+    "answer": [
+      {
+        "text": "USD 12.50",
+        "label": "MONEY"
+      },
+      {
+        "text": "5%",
+        "label": "PERCENT"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-011",
+    "category": "ner",
+    "text": "Contact first.last@company.com before 2026-12-24.",
+    "answer": [
+      {
+        "text": "first.last@company.com",
+        "label": "EMAIL"
+      },
+      {
+        "text": "2026-12-24",
+        "label": "DATE"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-012",
+    "category": "ner",
+    "text": "Budget line: $300 and utilization 80%.",
+    "answer": [
+      {
+        "text": "$300",
+        "label": "MONEY"
+      },
+      {
+        "text": "80%",
+        "label": "PERCENT"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-013",
+    "category": "ner",
+    "text": "Launch date is 1/5/2027.",
+    "answer": [
+      {
+        "text": "1/5/2027",
+        "label": "DATE"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-014",
+    "category": "ner",
+    "text": "Email support@example.org; refund amount is $42.",
+    "answer": [
+      {
+        "text": "support@example.org",
+        "label": "EMAIL"
+      },
+      {
+        "text": "$42",
+        "label": "MONEY"
+      }
+    ]
+  },
+  {
+    "id": "ner-dev-015",
+    "category": "ner",
+    "text": "The alert says 100% CPU on 2026-09-09, notify admin@ops.net.",
+    "answer": [
+      {
+        "text": "100%",
+        "label": "PERCENT"
+      },
+      {
+        "text": "2026-09-09",
+        "label": "DATE"
+      },
+      {
+        "text": "admin@ops.net",
+        "label": "EMAIL"
       }
     ]
   }
