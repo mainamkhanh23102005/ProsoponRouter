@@ -182,11 +182,15 @@
   {
     "id": "ner-dev-001",
     "category": "ner",
-    "text": "Email dan@example.com by 2026-07-11.",
+    "text": "Barack Obama visited Paris on 2026-07-11.",
     "answer": [
       {
-        "text": "dan@example.com",
-        "label": "EMAIL"
+        "text": "Barack Obama",
+        "label": "PERSON"
+      },
+      {
+        "text": "Paris",
+        "label": "LOCATION"
       },
       {
         "text": "2026-07-11",
@@ -197,56 +201,76 @@
   {
     "id": "ner-dev-002",
     "category": "ner",
-    "text": "Send the receipt to finance@startup.io and cc ops@startup.io.",
+    "text": "Microsoft opened a research office in London.",
     "answer": [
       {
-        "text": "finance@startup.io",
-        "label": "EMAIL"
+        "text": "Microsoft",
+        "label": "ORG"
       },
       {
-        "text": "ops@startup.io",
-        "label": "EMAIL"
+        "text": "London",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-003",
     "category": "ner",
-    "text": "The invoice total is $1,200.00 after a 15% discount.",
+    "text": "Sundar Pichai spoke for Google in New York.",
     "answer": [
       {
-        "text": "$1,200.00",
-        "label": "MONEY"
+        "text": "Sundar Pichai",
+        "label": "PERSON"
       },
       {
-        "text": "15%",
-        "label": "PERCENT"
+        "text": "Google",
+        "label": "ORG"
+      },
+      {
+        "text": "New York",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-004",
     "category": "ner",
-    "text": "Schedule the review for 07/08/2026 and notify lead@demo.dev.",
+    "text": "Elon Musk announced Tesla's plan in Berlin on 07/08/2026.",
     "answer": [
+      {
+        "text": "Elon Musk",
+        "label": "PERSON"
+      },
+      {
+        "text": "Tesla",
+        "label": "ORG"
+      },
+      {
+        "text": "Berlin",
+        "label": "LOCATION"
+      },
       {
         "text": "07/08/2026",
         "label": "DATE"
-      },
-      {
-        "text": "lead@demo.dev",
-        "label": "EMAIL"
       }
     ]
   },
   {
     "id": "ner-dev-005",
     "category": "ner",
-    "text": "USD 75 is due on 2026-08-01.",
+    "text": "Tim Cook met Apple engineers in California on 2026-08-01.",
     "answer": [
       {
-        "text": "USD 75",
-        "label": "MONEY"
+        "text": "Tim Cook",
+        "label": "PERSON"
+      },
+      {
+        "text": "Apple",
+        "label": "ORG"
+      },
+      {
+        "text": "California",
+        "label": "LOCATION"
       },
       {
         "text": "2026-08-01",
@@ -257,45 +281,53 @@
   {
     "id": "ner-dev-006",
     "category": "ner",
-    "text": "Meeting on 2026-07-11 at 3pm, email dan@example.com, cost $25.50 (25% discount).",
+    "text": "Amazon hired Alice Johnson in Seattle.",
     "answer": [
       {
-        "text": "2026-07-11",
-        "label": "DATE"
+        "text": "Amazon",
+        "label": "ORG"
       },
       {
-        "text": "dan@example.com",
-        "label": "EMAIL"
+        "text": "Alice Johnson",
+        "label": "PERSON"
       },
       {
-        "text": "$25.50",
-        "label": "MONEY"
-      },
-      {
-        "text": "25%",
-        "label": "PERCENT"
+        "text": "Seattle",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-007",
     "category": "ner",
-    "text": "The campaign reached 99.5% completion.",
+    "text": "The United Nations held talks in Geneva.",
     "answer": [
       {
-        "text": "99.5%",
-        "label": "PERCENT"
+        "text": "The United Nations",
+        "label": "ORG"
+      },
+      {
+        "text": "Geneva",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-008",
     "category": "ner",
-    "text": "Pay $0.99 for the trial and renew on 12/31/2026.",
+    "text": "IBM invited Maria Garcia to Tokyo for 12/31/2026.",
     "answer": [
       {
-        "text": "$0.99",
-        "label": "MONEY"
+        "text": "IBM",
+        "label": "ORG"
+      },
+      {
+        "text": "Maria Garcia",
+        "label": "PERSON"
+      },
+      {
+        "text": "Tokyo",
+        "label": "LOCATION"
       },
       {
         "text": "12/31/2026",
@@ -306,37 +338,53 @@
   {
     "id": "ner-dev-009",
     "category": "ner",
-    "text": "Forward logs to qa-team+alerts@example.co.uk.",
+    "text": "Mark Zuckerberg spoke at Microsoft in Dublin.",
     "answer": [
       {
-        "text": "qa-team+alerts@example.co.uk",
-        "label": "EMAIL"
+        "text": "Mark Zuckerberg",
+        "label": "PERSON"
+      },
+      {
+        "text": "Microsoft",
+        "label": "ORG"
+      },
+      {
+        "text": "Dublin",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-010",
     "category": "ner",
-    "text": "The service fee is USD 12.50, with 5% tax.",
+    "text": "Angela Merkel traveled from Germany to Brussels.",
     "answer": [
       {
-        "text": "USD 12.50",
-        "label": "MONEY"
+        "text": "Angela Merkel",
+        "label": "PERSON"
       },
       {
-        "text": "5%",
-        "label": "PERCENT"
+        "text": "Germany",
+        "label": "LOCATION"
+      },
+      {
+        "text": "Brussels",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-011",
     "category": "ner",
-    "text": "Contact first.last@company.com before 2026-12-24.",
+    "text": "Netflix released the feature in Canada on 2026-12-24.",
     "answer": [
       {
-        "text": "first.last@company.com",
-        "label": "EMAIL"
+        "text": "Netflix",
+        "label": "ORG"
+      },
+      {
+        "text": "Canada",
+        "label": "LOCATION"
       },
       {
         "text": "2026-12-24",
@@ -347,15 +395,19 @@
   {
     "id": "ner-dev-012",
     "category": "ner",
-    "text": "Budget line: $300 and utilization 80%.",
+    "text": "Serena Williams joined Nike for an event in Melbourne.",
     "answer": [
       {
-        "text": "$300",
-        "label": "MONEY"
+        "text": "Serena Williams",
+        "label": "PERSON"
       },
       {
-        "text": "80%",
-        "label": "PERCENT"
+        "text": "Nike",
+        "label": "ORG"
+      },
+      {
+        "text": "Melbourne",
+        "label": "LOCATION"
       }
     ]
   },
@@ -373,34 +425,42 @@
   {
     "id": "ner-dev-014",
     "category": "ner",
-    "text": "Email support@example.org; refund amount is $42.",
+    "text": "Google and Microsoft signed a deal in Singapore.",
     "answer": [
       {
-        "text": "support@example.org",
-        "label": "EMAIL"
+        "text": "Google",
+        "label": "ORG"
       },
       {
-        "text": "$42",
-        "label": "MONEY"
+        "text": "Microsoft",
+        "label": "ORG"
+      },
+      {
+        "text": "Singapore",
+        "label": "LOCATION"
       }
     ]
   },
   {
     "id": "ner-dev-015",
     "category": "ner",
-    "text": "The alert says 100% CPU on 2026-09-09, notify admin@ops.net.",
+    "text": "Lisa Chen met IBM in Boston on 2026-09-09.",
     "answer": [
       {
-        "text": "100%",
-        "label": "PERCENT"
+        "text": "Lisa Chen",
+        "label": "PERSON"
+      },
+      {
+        "text": "IBM",
+        "label": "ORG"
+      },
+      {
+        "text": "Boston",
+        "label": "LOCATION"
       },
       {
         "text": "2026-09-09",
         "label": "DATE"
-      },
-      {
-        "text": "admin@ops.net",
-        "label": "EMAIL"
       }
     ]
   }

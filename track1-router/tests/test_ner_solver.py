@@ -5,6 +5,10 @@ import unittest
 from src.solvers import ner_solver
 
 
+def spacy_model_available() -> bool:
+    return ner_solver.load_spacy_model() is not None
+
+
 class NerSolverTest(unittest.TestCase):
     def assert_entities(self, text: str, expected: list[dict[str, str]]) -> None:
         answer, confidence = ner_solver.solve({"text": text})
@@ -16,45 +20,51 @@ class NerSolverTest(unittest.TestCase):
         self.assertIsNone(answer)
         self.assertEqual(confidence, 0.0)
 
-    def test_adjacent_entities_are_bounded(self) -> None:
+    def test_numeric_date_regex(self) -> None:
+        self.assert_entities("The launch date is 2026-07-11.", [{"text": "2026-07-11", "label": "DATE"}])
+
+    def test_slash_date_regex(self) -> None:
+        self.assert_entities("Schedule it for 07/08/2026.", [{"text": "07/08/2026", "label": "DATE"}])
+
+    def test_email_money_percent_are_not_official_entities(self) -> None:
+        self.assert_declines("Email dan@example.com, pay $25.50, and apply 25%.")
+
+    @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
+    def test_person_and_org(self) -> None:
         self.assert_entities(
-            "Meeting on 2026-07-11 at 3pm, email dan@example.com, cost $25.50 (25% discount).",
+            "Satya Nadella leads Microsoft.",
             [
-                {"text": "2026-07-11", "label": "DATE"},
-                {"text": "dan@example.com", "label": "EMAIL"},
-                {"text": "$25.50", "label": "MONEY"},
-                {"text": "25%", "label": "PERCENT"},
+                {"text": "Satya Nadella", "label": "PERSON"},
+                {"text": "Microsoft", "label": "ORG"},
             ],
         )
 
-    def test_invalid_email_declines(self) -> None:
-        self.assert_declines("user@@doubled..com")
+    @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
+    def test_location(self) -> None:
+        self.assert_entities("The meeting is in Hanoi.", [{"text": "Hanoi", "label": "LOCATION"}])
 
-    def test_numeric_date_matches(self) -> None:
-        self.assert_entities("07/08/2026", [{"text": "07/08/2026", "label": "DATE"}])
-
-    def test_natural_language_date_declines(self) -> None:
-        self.assert_declines("the 4th of July")
-
-    def test_no_entities_declines(self) -> None:
-        self.assert_declines("The weather is nice today.")
-
-    def test_money_words_known_gap_declines(self) -> None:
-        self.assert_declines("It costs 25 dollars and 50 cents")
-
-    def test_percent_not_phone_number(self) -> None:
-        self.assert_entities("Call 100% at 555-0142", [{"text": "100%", "label": "PERCENT"}])
-
-    def test_multiple_emails_preserve_order(self) -> None:
+    @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
+    def test_mixed_official_entities_preserve_order(self) -> None:
         self.assert_entities(
-            "cc jane@x.com and john@y.com",
+            "Alice Johnson met Google in London on 2026-08-01.",
             [
-                {"text": "jane@x.com", "label": "EMAIL"},
-                {"text": "john@y.com", "label": "EMAIL"},
+                {"text": "Alice Johnson", "label": "PERSON"},
+                {"text": "Google", "label": "ORG"},
+                {"text": "London", "label": "LOCATION"},
+                {"text": "2026-08-01", "label": "DATE"},
+            ],
+        )
+
+    @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
+    def test_multiple_locations(self) -> None:
+        self.assert_entities(
+            "The team moved from Paris to Berlin.",
+            [
+                {"text": "Paris", "label": "LOCATION"},
+                {"text": "Berlin", "label": "LOCATION"},
             ],
         )
 
 
 if __name__ == "__main__":
     unittest.main()
-
