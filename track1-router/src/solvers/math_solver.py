@@ -38,12 +38,49 @@ def solve(task: dict[str, Any]) -> tuple[Any | None, float]:
 
 
 def extract_expression(text: str) -> str | None:
+    if is_relation_question(text):
+        return None
+    word_expression = extract_word_expression(text)
+    if word_expression:
+        return word_expression
     candidates = re.findall(r"[-+*/().\d\s^]+", text)
     candidates = [item.strip().replace("^", "**") for item in candidates if re.search(r"\d", item)]
     candidates = [item for item in candidates if re.search(r"[-+*/]", item)]
     if len(candidates) != 1:
         return None
     return candidates[0]
+
+
+def is_relation_question(text: str) -> bool:
+    lowered = text.lower()
+    return any(phrase in lowered for phrase in (" equal to ", " equals ", " greater than ", " less than "))
+
+
+def extract_word_expression(text: str) -> str | None:
+    lowered = text.lower().strip()
+    number = r"(-?\d+(?:\.\d+)?)"
+
+    match = re.search(rf"\bhalf of {number}\s+minus\s+{number}\b", lowered)
+    if match:
+        first, second = match.groups()
+        return f"({first} / 2) - {second}"
+
+    match = re.search(rf"\badd\s+{number}\s+and\s+{number},?\s+then\s+multiply\s+by\s+{number}\b", lowered)
+    if match:
+        first, second, third = match.groups()
+        return f"({first} + {second}) * {third}"
+
+    match = re.search(rf"\b{number}\s+divided by\s+{number}(?:,\s*divided by\s+{number})+\b", lowered)
+    if match:
+        numbers = re.findall(number, match.group(0))
+        return " / ".join(numbers)
+
+    match = re.search(rf"\b{number}\s+mod\s+{number}\b", lowered)
+    if match:
+        first, second = match.groups()
+        return f"{first} % {second}"
+
+    return None
 
 
 def safe_eval(expression: str) -> int | float:
@@ -59,4 +96,3 @@ def _eval(node: ast.AST) -> int | float:
     if isinstance(node, ast.UnaryOp) and type(node.op) in OPS:
         return OPS[type(node.op)](_eval(node.operand))
     raise ValueError(f"unsupported expression: {ast.dump(node)}")
-
