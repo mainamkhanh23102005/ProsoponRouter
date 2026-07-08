@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 
@@ -47,12 +48,17 @@ def atomic_write_json(path: Path, payload: Any) -> None:
 def run(input_path: Path, output_path: Path) -> int:
     answers: dict[str, Any] = {}
     tasks = load_tasks(input_path)
+    started_at = time.monotonic()
 
     for index, task in enumerate(tasks):
         current_id = task_id(task, index)
         try:
             category = classify(task)
-            answer, meta = route_task(task, category)
+            if watchdog_expired(started_at):
+                answer = config.FALLBACK_ANSWERS.get(category, config.FALLBACK_ANSWERS["unknown"])
+                meta = {"path": "watchdog_fallback", "tokens": 0}
+            else:
+                answer, meta = route_task(task, category)
         except Exception as exc:  # noqa: BLE001 - every task must get a result.
             category = "unknown"
             answer = config.FALLBACK_ANSWERS["unknown"]
@@ -67,6 +73,14 @@ def run(input_path: Path, output_path: Path) -> int:
     return 0
 
 
+def watchdog_expired(started_at: float) -> bool:
+    if config.LATENCY_LIMIT_SECONDS <= 0:
+        return False
+    elapsed = time.monotonic() - started_at
+    usable_seconds = max(0.0, config.LATENCY_LIMIT_SECONDS - config.LATENCY_RESERVE_SECONDS)
+    return elapsed >= usable_seconds
+
+
 def main() -> int:
     try:
         return run(Path(config.TASK_INPUT_PATH), Path(config.RESULTS_OUTPUT_PATH))
@@ -78,4 +92,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

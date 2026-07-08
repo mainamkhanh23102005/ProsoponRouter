@@ -26,6 +26,8 @@ CHEAPEST_MODEL = os.getenv("CHEAPEST_MODEL", ALLOWED_MODELS[0])
 DRY_RUN = os.getenv("DRY_RUN", "0").strip().lower() in {"1", "true", "yes", "on"}
 ACCURACY_THRESHOLD = float(os.getenv("ACCURACY_THRESHOLD", "0.95"))
 HTTP_TIMEOUT_SECONDS = float(os.getenv("HTTP_TIMEOUT_SECONDS", "30"))
+LATENCY_LIMIT_SECONDS = float(os.getenv("LATENCY_LIMIT_SECONDS", "0"))
+LATENCY_RESERVE_SECONDS = float(os.getenv("LATENCY_RESERVE_SECONDS", "1"))
 
 VALID_CATEGORIES = {
     "math",
