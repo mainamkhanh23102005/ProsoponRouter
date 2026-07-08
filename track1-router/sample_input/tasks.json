@@ -1,42 +1,34 @@
 [
   {
-    "id": "math-1",
-    "category": "math",
-    "question": "What is 2 + 2 * 3?"
+    "task_id": "math-1",
+    "prompt": "Calculate 2 + 2 * 3."
   },
   {
-    "id": "sentiment-1",
-    "category": "sentiment",
-    "text": "The dashboard is fast, clear, and useful."
+    "task_id": "sentiment-1",
+    "prompt": "Classify the sentiment of this review: The dashboard is fast, clear, and useful."
   },
   {
-    "id": "ner-1",
-    "category": "NER",
-    "text": "Sarah Johnson met with representatives from Microsoft in Seattle on 2026-07-11."
+    "task_id": "ner-1",
+    "prompt": "Extract named entities from: Sarah Johnson met with representatives from Microsoft in Seattle on 2026-07-11."
   },
   {
-    "id": "summary-1",
-    "category": "summarization",
-    "text": "AMD announced a developer hackathon. Teams build AI apps. Token efficiency matters."
+    "task_id": "summary-1",
+    "prompt": "Summarize this text: AMD announced a developer hackathon. Teams build AI apps. Token efficiency matters."
   },
   {
-    "id": "fact-1",
-    "category": "factual knowledge",
-    "question": "What is the capital of Vietnam?"
+    "task_id": "fact-1",
+    "prompt": "Answer this factual knowledge question: What is the capital of Vietnam?"
   },
   {
-    "id": "debug-1",
-    "category": "code debugging",
+    "task_id": "debug-1",
     "prompt": "Find the bug: def add(a, b): return a - b"
   },
   {
-    "id": "codegen-1",
-    "category": "code generation",
+    "task_id": "codegen-1",
     "prompt": "Write a Python function that returns the larger of two numbers."
   },
   {
-    "id": "logic-1",
-    "category": "logical reasoning",
-    "question": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?"
+    "task_id": "logic-1",
+    "prompt": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?"
   }
 ]
