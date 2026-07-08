@@ -44,19 +44,21 @@ def classify(task: dict[str, Any]) -> str:
             return category
 
     text = task_text(task).lower()
-    if re.search(r"\b(sentiment|positive|negative|neutral)\b", text):
-        return "sentiment"
     if re.search(r"\b(summarize|summary|tl;dr)\b", text):
         return "summarization"
-    if re.search(r"\b(entity|entities|ner|email|phone|date)\b", text):
+    if re.search(r"\b(classify|label|determine|analyze)\b.{0,40}\bsentiment\b|\bsentiment\s+of\b", text):
+        return "sentiment"
+    if re.search(
+        r"\b(extract|find|identify|list)\b.{0,50}\b(named entities|entities|person|people|organizations?|locations?|dates?)\b|\bner\b",
+        text,
+    ):
         return "ner"
-    if re.search(r"\b(debug|bug|traceback|exception|syntaxerror)\b", text):
+    if re.search(r"\b(debug|find the bug|fix the bug|traceback|syntaxerror)\b", text):
         return "code debugging"
-    if re.search(r"\b(write|implement|function|class|program)\b", text):
+    if re.search(r"\b(write|implement|create)\b.{0,40}\b(function|class|program|script)\b", text):
         return "code generation"
     if re.search(r"\b(if all|therefore|must be|can be true|logic)\b", text):
         return "logical reasoning"
-    if re.search(r"\d+\s*[-+*/^]\s*\d+", text):
+    if re.search(r"\b(calculate|compute|evaluate|what is|what's)\b.{0,40}\d+\s*[-+*/%^]\s*\d+", text):
         return "math"
     return "unknown"
-
