@@ -27,7 +27,10 @@ class NerSolverTest(unittest.TestCase):
         self.assert_entities("Schedule it for 07/08/2026.", [{"text": "07/08/2026", "label": "DATE"}])
 
     def test_email_money_percent_are_not_official_entities(self) -> None:
-        self.assert_declines("Email dan@example.com, pay $25.50, and apply 25%.")
+        self.assert_entities("Email dan@example.com, pay $25.50, and apply 25%.", [])
+
+    def test_zero_official_entities_returns_empty_list(self) -> None:
+        self.assert_entities("The dashboard loaded after three seconds.", [])
 
     @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
     def test_person_and_org(self) -> None:

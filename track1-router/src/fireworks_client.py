@@ -85,7 +85,7 @@ class FireworksClient:
 def build_prompt(task: dict[str, Any], category: str) -> str:
     text = task_text(task).strip()
     if category == "sentiment":
-        return f"Label sentiment as positive, negative, or neutral. Output one label only.\n{text}"
+        return f"Label sentiment as positive, negative, or neutral. Output '<label>: <brief evidence>'.\n{text}"
     if category == "math":
         return f"Answer with only the final value.\n{text}"
     if category == "ner":
@@ -99,7 +99,7 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
 
 def dry_run_answer(task: dict[str, Any], category: str) -> Any:
     if category == "sentiment":
-        return "neutral"
+        return "neutral: dry-run fallback without sentiment evidence"
     if category == "ner":
         return []
     if category == "math":

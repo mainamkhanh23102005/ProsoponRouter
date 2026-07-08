@@ -93,91 +93,91 @@
     "id": "sent-dev-001",
     "category": "sentiment",
     "text": "The dashboard is excellent, fast, and useful for daily checks.",
-    "answer": "positive"
+    "answer": "positive: detected positive evidence words 'excellent', 'fast', 'useful'"
   },
   {
     "id": "sent-dev-002",
     "category": "sentiment",
     "text": "The export flow is terrible and painfully slow.",
-    "answer": "negative"
+    "answer": "negative: detected negative evidence words 'slow', 'terrible'"
   },
   {
     "id": "sent-dev-003",
     "category": "sentiment",
     "text": "The meeting is at 3pm on Tuesday in room 204.",
-    "answer": "neutral"
+    "answer": "neutral: factual scheduling words 'meeting', 'room', 'tuesday' with no sentiment words"
   },
   {
     "id": "sent-dev-004",
     "category": "sentiment",
     "text": "The fix is not bad at all after the latest patch.",
-    "answer": "positive"
+    "answer": "positive: negation phrase 'not bad' flips negative word 'bad'"
   },
   {
     "id": "sent-dev-005",
     "category": "sentiment",
     "text": "The new layout is not good for quick scanning.",
-    "answer": "negative"
+    "answer": "negative: negation phrase 'not good' flips positive word 'good'"
   },
   {
     "id": "sent-dev-006",
     "category": "sentiment",
     "text": "The movie was neither good nor bad.",
-    "answer": "neutral"
+    "answer": "neutral: phrase 'neither good nor bad' states balanced sentiment"
   },
   {
     "id": "sent-dev-007",
     "category": "sentiment",
     "text": "I love the clear filters and the fast response time.",
-    "answer": "positive"
+    "answer": "positive: detected positive evidence words 'clear', 'fast', 'love'"
   },
   {
     "id": "sent-dev-008",
     "category": "sentiment",
     "text": "I hate the broken chart because it keeps showing awful values.",
-    "answer": "negative"
+    "answer": "negative: detected negative evidence words 'awful', 'broken', 'hate'"
   },
   {
     "id": "sent-dev-009",
     "category": "sentiment",
     "text": "The appointment is on Monday at 10am.",
-    "answer": "neutral"
+    "answer": "neutral: factual scheduling words 'monday' with no sentiment words"
   },
   {
     "id": "sent-dev-010",
     "category": "sentiment",
     "text": "The tool is great for summaries and excellent for quick reviews.",
-    "answer": "positive"
+    "answer": "positive: detected positive evidence words 'excellent', 'great'"
   },
   {
     "id": "sent-dev-011",
     "category": "sentiment",
     "text": "The report generator is poor, slow, and broken.",
-    "answer": "negative"
+    "answer": "negative: detected negative evidence words 'broken', 'poor', 'slow'"
   },
   {
     "id": "sent-dev-012",
     "category": "sentiment",
     "text": "Room 18 is reserved on Friday.",
-    "answer": "neutral"
+    "answer": "neutral: factual scheduling words 'friday', 'room' with no sentiment words"
   },
   {
     "id": "sent-dev-013",
     "category": "sentiment",
     "text": "The assistant gave the best answer and a useful explanation.",
-    "answer": "positive"
+    "answer": "positive: detected positive evidence words 'best', 'useful'"
   },
   {
     "id": "sent-dev-014",
     "category": "sentiment",
     "text": "The checkout experience was the worst and the support was terrible.",
-    "answer": "negative"
+    "answer": "negative: detected negative evidence words 'terrible', 'worst'"
   },
   {
     "id": "sent-dev-015",
     "category": "sentiment",
     "text": "The file was uploaded at 7pm on Wednesday.",
-    "answer": "neutral"
+    "answer": "neutral: factual scheduling words 'wednesday' with no sentiment words"
   },
   {
     "id": "ner-dev-001",
@@ -216,10 +216,14 @@
   {
     "id": "ner-dev-003",
     "category": "ner",
-    "text": "Sundar Pichai spoke for Google in New York.",
+    "text": "Sundar Pichai and Tim Cook spoke for Google in New York.",
     "answer": [
       {
         "text": "Sundar Pichai",
+        "label": "PERSON"
+      },
+      {
+        "text": "Tim Cook",
         "label": "PERSON"
       },
       {
@@ -414,13 +418,8 @@
   {
     "id": "ner-dev-013",
     "category": "ner",
-    "text": "Launch date is 1/5/2027.",
-    "answer": [
-      {
-        "text": "1/5/2027",
-        "label": "DATE"
-      }
-    ]
+    "text": "The dashboard loaded after three seconds.",
+    "answer": []
   },
   {
     "id": "ner-dev-014",

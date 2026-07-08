@@ -67,7 +67,7 @@ POLICY: dict[str, CategoryPolicy] = {
 FALLBACK_ANSWERS: dict[str, Any] = {
     "math": "",
     "ner": [],
-    "sentiment": "neutral",
+    "sentiment": "neutral: fallback answer used after deterministic and model paths failed",
     "summarization": "",
     "factual knowledge": "",
     "code debugging": "",

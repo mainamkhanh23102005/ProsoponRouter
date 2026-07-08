@@ -12,7 +12,7 @@
   {
     "id": "ner-1",
     "category": "NER",
-    "text": "Contact Dan at dan@example.com on 2026-07-11 after paying $25.50."
+    "text": "Sarah Johnson met with representatives from Microsoft in Seattle on 2026-07-11."
   },
   {
     "id": "summary-1",
@@ -40,4 +40,3 @@
     "question": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?"
   }
 ]
-

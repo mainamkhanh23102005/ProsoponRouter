@@ -8,7 +8,8 @@ from src.solvers import sentiment_solver
 class SentimentSolverTest(unittest.TestCase):
     def assert_label(self, text: str, expected: str) -> None:
         answer, confidence = sentiment_solver.solve({"text": text})
-        self.assertEqual(answer, expected)
+        self.assertIsNotNone(answer)
+        self.assertTrue(answer.startswith(f"{expected}: "), answer)
         self.assertGreaterEqual(confidence, 0.92)
 
     def assert_declines(self, text: str) -> None:
@@ -31,7 +32,16 @@ class SentimentSolverTest(unittest.TestCase):
         if answer is None:
             self.assertEqual(confidence, 0.0)
         else:
+            self.assertTrue(answer.startswith("neutral: "), answer)
             self.assertGreaterEqual(confidence, 0.92)
+
+    def test_positive_output_includes_detected_evidence(self) -> None:
+        answer, _ = sentiment_solver.solve({"text": "The tool is excellent and useful."})
+        self.assertEqual(answer, "positive: detected positive evidence words 'excellent', 'useful'")
+
+    def test_negative_output_includes_detected_evidence(self) -> None:
+        answer, _ = sentiment_solver.solve({"text": "The report is slow and broken."})
+        self.assertEqual(answer, "negative: detected negative evidence words 'broken', 'slow'")
 
     def test_sarcasm_marker_declines(self) -> None:
         self.assert_declines("GREAT. Just great. Another bug.")
@@ -54,4 +64,3 @@ class SentimentSolverTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

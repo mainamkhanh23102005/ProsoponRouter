@@ -35,7 +35,7 @@ def solve(task: dict[str, Any]) -> tuple[list[dict[str, str]] | None, float]:
             entities.append((ent.start_char, ent.end_char, {"text": ent.text, "label": label}))
 
     if not entities:
-        return None, 0.0
+        return [], 0.92
     entities.sort(key=lambda item: (item[0], item[1]))
     return [entity for _, _, entity in entities], 0.92
 
