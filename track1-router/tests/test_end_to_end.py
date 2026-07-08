@@ -45,7 +45,9 @@ class EndToEndTest(unittest.TestCase):
                         os.environ[key] = value
 
             results = json.loads(output_path.read_text(encoding="utf-8"))
-            answer_by_id = {item["id"]: item["answer"] for item in results}
+            self.assertTrue(all("task_id" in item for item in results))
+            self.assertTrue(all("id" not in item for item in results))
+            answer_by_id = {item["task_id"]: item["answer"] for item in results}
             self.assertEqual(set(answer_by_id), {"m", "s", "n", "u"})
             self.assertEqual(answer_by_id["m"], "5")
             self.assertTrue(answer_by_id["s"].startswith("positive: "), answer_by_id["s"])

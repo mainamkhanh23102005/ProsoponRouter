@@ -29,11 +29,7 @@ def load_tasks(path: Path) -> list[dict[str, Any]]:
 
 
 def format_results(answer_by_id: dict[str, Any]) -> Any:
-    if config.RESULTS_SCHEMA_STYLE == "list":
-        return [{"id": key, "answer": value} for key, value in answer_by_id.items()]
-    if config.RESULTS_SCHEMA_STYLE == "wrapped":
-        return {"results": [{"id": key, "answer": value} for key, value in answer_by_id.items()]}
-    return answer_by_id
+    return [{"task_id": key, "answer": value} for key, value in answer_by_id.items()]
 
 
 def atomic_write_json(path: Path, payload: Any) -> None:
