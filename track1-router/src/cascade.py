@@ -41,13 +41,32 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
         return result.answer, {
             "path": "fireworks",
             "tokens": result.total_tokens,
+            "attempts": 1,
             "error": deterministic_error,
         }
+
+    total_tokens = result.total_tokens
+    if result.answer is not None and policy.retry_on_invalid:
+        retry_feedback = f"expected {category} answer format; got {result.answer!r}"
+        retry_result = CLIENT.complete(task, category, retry_feedback=retry_feedback)
+        total_tokens += retry_result.total_tokens
+        if retry_result.answer is not None and validate_answer(category, retry_result.answer):
+            return retry_result.answer, {
+                "path": "fireworks_retry",
+                "tokens": total_tokens,
+                "attempts": 2,
+                "retried": True,
+                "error": deterministic_error,
+            }
+        retry_error = retry_result.error or result.error or deterministic_error
+    else:
+        retry_error = result.error or deterministic_error
 
     fallback = config.FALLBACK_ANSWERS.get(category, config.FALLBACK_ANSWERS["unknown"])
     return fallback, {
         "path": "fallback",
-        "tokens": result.total_tokens,
-        "error": result.error or deterministic_error,
+        "tokens": total_tokens,
+        "attempts": 2 if result.answer is not None and policy.retry_on_invalid else 1,
+        "retried": bool(result.answer is not None and policy.retry_on_invalid),
+        "error": retry_error,
     }
-

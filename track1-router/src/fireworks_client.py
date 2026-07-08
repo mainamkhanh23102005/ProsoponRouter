@@ -27,9 +27,9 @@ class FireworksClient:
     def __init__(self) -> None:
         self.total_tokens = 0
 
-    def complete(self, task: dict[str, Any], category: str) -> FireworksResult:
+    def complete(self, task: dict[str, Any], category: str, retry_feedback: str | None = None) -> FireworksResult:
         policy = config.POLICY.get(category, config.POLICY["unknown"])
-        prompt = build_prompt(task, category)
+        prompt = build_retry_prompt(task, category, retry_feedback) if retry_feedback else build_prompt(task, category)
 
         if config.DRY_RUN:
             return dry_run_result(task, category)
@@ -101,6 +101,27 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
     if category == "factual knowledge":
         return f"Answer only the fact, no explanation.\n{text}"
     return f"Answer only.\n{text}"
+
+
+def build_retry_prompt(task: dict[str, Any], category: str, feedback: str | None = None) -> str:
+    expected = expected_format(category)
+    text = task_text(task).strip()
+    feedback_line = f"\nPrevious failure: {feedback}" if feedback else ""
+    return f"Previous answer invalid. Reply with ONLY {expected}. Nothing else.{feedback_line}\n{text}"
+
+
+def expected_format(category: str) -> str:
+    if category == "code debugging":
+        return "corrected Python code"
+    if category == "code generation":
+        return "Python code"
+    if category == "sentiment":
+        return "<positive|negative|neutral>: one sentence reason"
+    if category == "ner":
+        return "LABEL: text; ... or NONE"
+    if category == "math":
+        return "the final value"
+    return "the final answer"
 
 
 def dry_run_result(task: dict[str, Any], category: str) -> FireworksResult:

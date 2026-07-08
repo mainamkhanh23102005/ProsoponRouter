@@ -44,14 +44,25 @@ class DryRunModeTest(unittest.TestCase):
         answer, meta = self.route_with_mode("invalid")
         self.assertEqual(answer, "")
         self.assertEqual(meta["path"], "fallback")
+        self.assertEqual(meta["attempts"], 1)
+        self.assertFalse(meta["retried"])
 
     def test_error_mode_falls_back(self) -> None:
         answer, meta = self.route_with_mode("error")
         self.assertEqual(answer, "")
         self.assertEqual(meta["path"], "fallback")
         self.assertEqual(meta["error"], "dry-run simulated API error")
+        self.assertEqual(meta["attempts"], 1)
+
+    def test_invalid_mode_retries_for_code_categories(self) -> None:
+        os.environ["DRY_RUN_MODE"] = "invalid"
+        cascade = self.reload_modules()
+        answer, meta = cascade.route_task({"prompt": "Write a Python function add(a, b)."}, "code generation")
+        self.assertEqual(answer, "")
+        self.assertEqual(meta["path"], "fallback")
+        self.assertTrue(meta["retried"])
+        self.assertEqual(meta["attempts"], 2)
 
 
 if __name__ == "__main__":
     unittest.main()
-
