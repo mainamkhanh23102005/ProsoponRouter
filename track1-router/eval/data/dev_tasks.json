@@ -1,0 +1,29 @@
+[
+  {
+    "id": "math-dev-1",
+    "category": "math",
+    "question": "What is 10 / 2 + 7?",
+    "answer": "12"
+  },
+  {
+    "id": "sent-dev-1",
+    "category": "sentiment",
+    "text": "The tool is excellent and useful.",
+    "answer": "positive"
+  },
+  {
+    "id": "ner-dev-1",
+    "category": "ner",
+    "text": "Email a@b.com by 2026-07-11.",
+    "answer": [
+      {
+        "text": "a@b.com",
+        "label": "EMAIL"
+      },
+      {
+        "text": "2026-07-11",
+        "label": "DATE"
+      }
+    ]
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "id": "math-1",
+    "category": "math",
+    "question": "What is 2 + 2 * 3?"
+  },
+  {
+    "id": "sentiment-1",
+    "category": "sentiment",
+    "text": "The dashboard is fast, clear, and useful."
+  },
+  {
+    "id": "ner-1",
+    "category": "NER",
+    "text": "Contact Dan at dan@example.com on 2026-07-11 after paying $25.50."
+  },
+  {
+    "id": "summary-1",
+    "category": "summarization",
+    "text": "AMD announced a developer hackathon. Teams build AI apps. Token efficiency matters."
+  },
+  {
+    "id": "fact-1",
+    "category": "factual knowledge",
+    "question": "What is the capital of Vietnam?"
+  },
+  {
+    "id": "debug-1",
+    "category": "code debugging",
+    "prompt": "Find the bug: def add(a, b): return a - b"
+  },
+  {
+    "id": "codegen-1",
+    "category": "code generation",
+    "prompt": "Write a Python function that returns the larger of two numbers."
+  },
+  {
+    "id": "logic-1",
+    "category": "logical reasoning",
+    "question": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?"
+  }
+]
+
