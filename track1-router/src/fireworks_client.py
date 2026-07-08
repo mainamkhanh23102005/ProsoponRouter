@@ -85,16 +85,22 @@ class FireworksClient:
 def build_prompt(task: dict[str, Any], category: str) -> str:
     text = task_text(task).strip()
     if category == "sentiment":
-        return f"Label sentiment as positive, negative, or neutral. Output '<label>: <brief evidence>'.\n{text}"
+        return f"Answer with sentiment label and one-sentence justification only: positive|negative|neutral: reason\n{text}"
     if category == "math":
-        return f"Answer with only the final value.\n{text}"
+        return f"Only final value.\n{text}"
     if category == "ner":
-        return f"Extract named entities as compact JSON only.\n{text}"
+        return f"Extract PERSON/ORG/LOCATION/DATE. Output 'LABEL: text; ...' or NONE only.\n{text}"
     if category == "summarization":
-        return f"Write a concise answer only, no preface.\n{text}"
-    if category.startswith("code"):
-        return f"Output only the answer or code requested. No explanation.\n{text}"
-    return f"Answer only, no explanation.\n{text}"
+        return f"Summarize in <=2 sentences. Output only summary.\n{text}"
+    if category == "code debugging":
+        return f"Return corrected Python code only. No markdown, no explanation.\n{text}"
+    if category == "code generation":
+        return f"Return Python code only. No markdown, no explanation.\n{text}"
+    if category == "logical reasoning":
+        return f"Answer yes/no/unknown only.\n{text}"
+    if category == "factual knowledge":
+        return f"Answer only the fact, no explanation.\n{text}"
+    return f"Answer only.\n{text}"
 
 
 def dry_run_result(task: dict[str, Any], category: str) -> FireworksResult:

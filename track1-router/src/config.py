@@ -53,15 +53,15 @@ class CategoryPolicy:
 
 
 POLICY: dict[str, CategoryPolicy] = {
-    "math": CategoryPolicy(True, CHEAPEST_MODEL, 16, 0.95),
-    "ner": CategoryPolicy(True, CHEAPEST_MODEL, 128, 0.90),
-    "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 4, 0.92),
-    "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 160),
-    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 32),
-    "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 220, retry_on_invalid=True),
+    "math": CategoryPolicy(True, CHEAPEST_MODEL, 16, 0.95, stop=("\n",)),
+    "ner": CategoryPolicy(True, CHEAPEST_MODEL, 96, 0.90),
+    "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 48, 0.92),
+    "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 120),
+    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 24, stop=("\n",)),
+    "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 260, retry_on_invalid=True),
     "logical reasoning": CategoryPolicy(False, CHEAPEST_MODEL, 80),
-    "code generation": CategoryPolicy(False, CHEAPEST_MODEL, 360, retry_on_invalid=True),
-    "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 64),
+    "code generation": CategoryPolicy(False, CHEAPEST_MODEL, 420, retry_on_invalid=True),
+    "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 48),
 }
 
 FALLBACK_ANSWERS: dict[str, Any] = {
