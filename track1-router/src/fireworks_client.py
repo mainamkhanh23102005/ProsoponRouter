@@ -48,14 +48,7 @@ class FireworksClient:
         except ImportError:
             return FireworksResult(answer=None, error="requests is not installed")
 
-        payload: dict[str, Any] = {
-            "model": policy.model,
-            "temperature": 0,
-            "max_tokens": policy.max_tokens,
-            "messages": [{"role": "user", "content": prompt}],
-        }
-        if policy.stop:
-            payload["stop"] = list(policy.stop)
+        payload = build_payload(policy, prompt)
 
         url = config.FIREWORKS_BASE_URL.rstrip("/") + "/chat/completions"
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -99,6 +92,24 @@ def sanitize_error(error: str) -> str:
         sanitized,
     )
     return sanitized
+
+
+def normalize_model_id(model: str) -> str:
+    if model.startswith("accounts/"):
+        return model
+    return f"accounts/fireworks/models/{model}"
+
+
+def build_payload(policy: config.CategoryPolicy, prompt: str) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "model": normalize_model_id(policy.model),
+        "temperature": 0,
+        "max_tokens": policy.max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    if policy.stop:
+        payload["stop"] = list(policy.stop)
+    return payload
 
 
 def build_prompt(task: dict[str, Any], category: str) -> str:
