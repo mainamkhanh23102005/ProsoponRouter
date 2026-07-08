@@ -12,11 +12,10 @@ class RetryPromptTest(unittest.TestCase):
             "code generation",
             "SyntaxError: invalid syntax",
         )
-        self.assertIn("Reply with ONLY Python code. Nothing else.", prompt)
+        self.assertIn("Reply with ONLY Python code followed by # SELF_CHECK: assert statements. Nothing else.", prompt)
         self.assertIn("SyntaxError: invalid syntax", prompt)
         self.assertIn("Write a function.", prompt)
 
 
 if __name__ == "__main__":
     unittest.main()
-

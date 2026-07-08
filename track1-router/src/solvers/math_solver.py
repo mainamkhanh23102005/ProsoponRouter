@@ -45,6 +45,8 @@ def extract_expression(text: str) -> str | None:
         return word_expression
     candidates = re.findall(r"[-+*/%().\d\s^]+", text)
     candidates = [normalize_expression(item) for item in candidates if re.search(r"\d", item)]
+    if any(is_date_shaped_expression(item) for item in candidates):
+        return None
     candidates = [item for item in candidates if re.search(r"[-+*/%]", item)]
     if len(candidates) != 1:
         return None
@@ -56,6 +58,10 @@ def normalize_expression(expression: str) -> str:
     while expression.endswith((".", "?")):
         expression = expression[:-1].rstrip()
     return expression
+
+
+def is_date_shaped_expression(expression: str) -> bool:
+    return bool(re.fullmatch(r"\d{1,4}\s*[-/]\s*\d{1,2}\s*[-/]\s*\d{2,4}", expression.strip()))
 
 
 def is_relation_question(text: str) -> bool:

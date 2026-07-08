@@ -25,8 +25,8 @@ CHEAPEST_MODEL = os.getenv("CHEAPEST_MODEL", ALLOWED_MODELS[0])
 DRY_RUN = os.getenv("DRY_RUN", "0").strip().lower() in {"1", "true", "yes", "on"}
 DRY_RUN_MODE = os.getenv("DRY_RUN_MODE", "success").strip().lower()
 ACCURACY_THRESHOLD = float(os.getenv("ACCURACY_THRESHOLD", "0.95"))
-HTTP_TIMEOUT_SECONDS = float(os.getenv("HTTP_TIMEOUT_SECONDS", "30"))
-LATENCY_LIMIT_SECONDS = float(os.getenv("LATENCY_LIMIT_SECONDS", "0"))
+HTTP_TIMEOUT_SECONDS = float(os.getenv("HTTP_TIMEOUT_SECONDS", "15"))
+LATENCY_LIMIT_SECONDS = float(os.getenv("LATENCY_LIMIT_SECONDS", "540"))
 LATENCY_RESERVE_SECONDS = float(os.getenv("LATENCY_RESERVE_SECONDS", "1"))
 
 VALID_CATEGORIES = {
@@ -67,7 +67,7 @@ POLICY: dict[str, CategoryPolicy] = {
 FALLBACK_ANSWERS: dict[str, Any] = {
     "math": "",
     "ner": "",
-    "sentiment": "neutral: fallback answer used after deterministic and model paths failed",
+    "sentiment": "",
     "summarization": "",
     "factual knowledge": "",
     "code debugging": "",

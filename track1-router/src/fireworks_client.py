@@ -121,13 +121,21 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
     if category == "ner":
         return f"Extract PERSON/ORG/LOCATION/DATE. Output 'LABEL: text; ...' or NONE only.\n{text}"
     if category == "summarization":
-        return f"Summarize in <=2 sentences. Output only summary.\n{text}"
+        return f"Follow the prompt's length/format instruction exactly. Output only the summary, no preamble.\n{text}"
     if category == "code debugging":
-        return f"Return corrected Python code only. No markdown, no explanation.\n{text}"
+        return (
+            "Return corrected Python code, then '# SELF_CHECK:' and 2-3 assert statements. "
+            "No markdown, no explanation.\n"
+            f"{text}"
+        )
     if category == "code generation":
-        return f"Return Python code only. No markdown, no explanation.\n{text}"
+        return (
+            "Return Python code, then '# SELF_CHECK:' and 2-3 assert statements. "
+            "No markdown, no explanation.\n"
+            f"{text}"
+        )
     if category == "logical reasoning":
-        return f"Answer yes/no/unknown only.\n{text}"
+        return f"Answer only with the final answer, no explanation.\n{text}"
     if category == "factual knowledge":
         return f"Answer only the fact, no explanation.\n{text}"
     return f"Answer only.\n{text}"
@@ -142,9 +150,9 @@ def build_retry_prompt(task: dict[str, Any], category: str, feedback: str | None
 
 def expected_format(category: str) -> str:
     if category == "code debugging":
-        return "corrected Python code"
+        return "corrected Python code followed by # SELF_CHECK: assert statements"
     if category == "code generation":
-        return "Python code"
+        return "Python code followed by # SELF_CHECK: assert statements"
     if category == "sentiment":
         return "<positive|negative|neutral>: one sentence reason"
     if category == "ner":
@@ -172,9 +180,9 @@ def dry_run_success_answer(task: dict[str, Any], category: str) -> Any:
     if category == "summarization":
         return "AMD hackathon teams build token-efficient AI apps."
     if category == "code debugging":
-        return "def add(a, b):\n    return a + b"
+        return "def add(a, b):\n    return a + b\n\n# SELF_CHECK:\nassert add(2, 3) == 5\nassert add(-1, 1) == 0"
     if category == "code generation":
-        return "def larger(a, b):\n    return a if a >= b else b"
+        return "def larger(a, b):\n    return a if a >= b else b\n\n# SELF_CHECK:\nassert larger(2, 3) == 3\nassert larger(5, 1) == 5"
     if category == "logical reasoning":
         return "yes"
     if category == "factual knowledge":

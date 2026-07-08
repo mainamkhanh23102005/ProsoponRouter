@@ -22,8 +22,15 @@ class CodeValidationResult:
     error: str | None = None
 
 
+@dataclass(frozen=True)
+class ParsedCodeAnswer:
+    code: str
+    self_checks: tuple[str, ...] = ()
+
+
 def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationResult:
-    code = extract_code(answer)
+    parsed = parse_code_answer(answer)
+    code = parsed.code
     if not code:
         return CodeValidationResult(False, code, "empty code answer")
 
@@ -37,8 +44,14 @@ def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationRes
             return CodeValidationResult(False, code, combined_output(compile_result))
 
         tests = list(iter_tests(task))
-        for index, test in enumerate(tests):
-            result = run_test_case(temp_path, test, index)
+        if tests:
+            for index, test in enumerate(tests):
+                result = run_test_case(temp_path, test, index)
+                if result.returncode != 0:
+                    return CodeValidationResult(False, code, combined_output(result))
+        elif parsed.self_checks:
+            solution_path.write_text(code + "\n\n" + "\n".join(parsed.self_checks) + "\n", encoding="utf-8")
+            result = run_python(["solution.py"], cwd=temp_path)
             if result.returncode != 0:
                 return CodeValidationResult(False, code, combined_output(result))
 
@@ -46,10 +59,26 @@ def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationRes
 
 
 def extract_code(answer: str) -> str:
+    return parse_code_answer(answer).code
+
+
+def parse_code_answer(answer: str) -> ParsedCodeAnswer:
+    text = strip_code_fences(answer)
+    marker = re.search(r"(?im)^#\s*SELF_CHECK\s*:\s*$", text)
+    if not marker:
+        return ParsedCodeAnswer(text.strip())
+
+    code = text[: marker.start()].strip()
+    raw_checks = text[marker.end() :].strip()
+    checks = tuple(line.strip() for line in raw_checks.splitlines() if line.strip().startswith("assert "))
+    return ParsedCodeAnswer(code, checks)
+
+
+def strip_code_fences(answer: str) -> str:
     match = re.search(r"```(?:python)?\s*(.*?)```", answer, flags=re.IGNORECASE | re.DOTALL)
     if match:
-        return match.group(1).strip()
-    return answer.strip()
+        answer = answer[: match.start()] + match.group(1) + answer[match.end() :]
+    return answer.replace("```", "").strip()
 
 
 def iter_tests(task: dict[str, Any]):

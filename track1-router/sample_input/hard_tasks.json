@@ -1,0 +1,10 @@
+[
+  { "task_id": "hard-fact-1", "prompt": "What is the difference between TCP and UDP, and name one real-world use case for each?" },
+  { "task_id": "hard-math-1", "prompt": "A tank starts with 480 liters. It drains at 8 liters per minute for 15 minutes, then is refilled at 12 liters per minute for 20 minutes, then drains again at 5 liters per minute for 10 minutes. How many liters are in the tank now?" },
+  { "task_id": "hard-sentiment-1", "prompt": "Classify the sentiment: 'Great, another update that breaks everything. Really looking forward to spending my weekend fixing this.'" },
+  { "task_id": "hard-summary-1", "prompt": "Summarize the following in exactly two sentences, no more: 'The AMD Developer Hackathon ACT II ran from July 6 to July 12, 2026, with three tracks covering AI agents, video captioning, and open innovation. Track 1 specifically scored submissions on an accuracy gate followed by token efficiency, encouraging participants to build hybrid systems that avoid unnecessary model calls. Participants received Fireworks AI credits and access to AMD cloud compute for the duration of the event.'" },
+  { "task_id": "hard-ner-1", "prompt": "Extract all named entities: 'Dr. Maria Chen, a researcher at Stanford University, presented findings alongside representatives from both Google DeepMind and OpenAI at a conference in Geneva on March 3rd, 2026.'" },
+  { "task_id": "hard-debug-1", "prompt": "Find and fix the bug: def make_multipliers():\n    return [lambda x: x * i for i in range(5)]\n# calling make_multipliers()[2](10) should return 20, but doesn't" },
+  { "task_id": "hard-logic-1", "prompt": "Five friends - Ivy, Jude, Kai, Lena, and Moss - sit in a row of 5 seats numbered 1 to 5. Ivy does not sit in seat 1. Moss does not sit in seat 5. The person who drinks tea sits immediately after Ivy. Kai does not drink water, and Kai does not sit immediately before Lena. Who sits in seat 1?" },
+  { "task_id": "hard-codegen-1", "prompt": "Write a Python function `is_palindrome(s)` that returns True if a string is a palindrome, ignoring case, spaces, and punctuation (e.g. 'A man, a plan, a canal: Panama' should return True)." }
+]

@@ -52,6 +52,12 @@ class MathSolverTest(unittest.TestCase):
     def test_decimal_result(self) -> None:
         self.assert_answer("10 / 4", "2.5")
 
+    def test_dash_separated_date_declines(self) -> None:
+        self.assert_declines("7-11-2026")
+
+    def test_slash_separated_date_declines(self) -> None:
+        self.assert_declines("7/11/2026")
+
     def test_trailing_sentence_period_after_parenthesized_expression(self) -> None:
         self.assert_answer("Calculate 7 + (6 * 5).", "37")
 

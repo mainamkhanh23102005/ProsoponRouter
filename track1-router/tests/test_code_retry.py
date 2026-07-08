@@ -56,7 +56,22 @@ class CodeRetryTest(unittest.TestCase):
         self.assertEqual(meta["path"], "fireworks_retry")
         self.assertIn("expected 5, got -1", fake.retry_feedback[1] or "")
 
+    def test_self_check_failure_triggers_retry_with_assertion_info(self) -> None:
+        fake = FakeClient(
+            [
+                "def add(a, b):\n    return a - b\n\n# SELF_CHECK:\nassert add(2, 3) == 5",
+                "def add(a, b):\n    return a + b\n\n# SELF_CHECK:\nassert add(2, 3) == 5",
+            ]
+        )
+        cascade.CLIENT = fake
+        answer, meta = cascade.route_task(
+            {"prompt": "Write a Python function add(a, b)."},
+            "code generation",
+        )
+        self.assertEqual(answer, "def add(a, b):\n    return a + b")
+        self.assertEqual(meta["path"], "fireworks_retry")
+        self.assertIn("AssertionError", fake.retry_feedback[1] or "")
+
 
 if __name__ == "__main__":
     unittest.main()
-

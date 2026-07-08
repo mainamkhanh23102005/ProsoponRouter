@@ -57,10 +57,26 @@ def classify(task: dict[str, Any]) -> str:
         return "code debugging"
     if re.search(r"\b(write|implement|create)\b.{0,40}\b(function|class|program|script)\b", text):
         return "code generation"
-    if re.search(r"\b(factual knowledge|factual question)\b", text):
-        return "factual knowledge"
-    if re.search(r"\b(if all|therefore|must be|can be true|logic)\b", text):
+    if re.search(
+        r"\b(if all|therefore|must be|can be true|logic|each owns?|does not|do not|"
+        r"immediately after|immediately before|next to|exactly one)\b",
+        text,
+    ):
         return "logical reasoning"
     if re.search(r"\b(calculate|compute|evaluate|what is|what's)\b.{0,40}\d+\s*[-+*/%^]\s*\d+", text):
         return "math"
+    if re.search(
+        r"\bhalf of\s*-?\d|"
+        r"\badd\s+-?\d+(?:\.\d+)?.{0,20}\b(?:and|to)\b.{0,20}-?\d|"
+        r"-?\d+(?:\.\d+)?.{0,12}\b(?:divided by|mod|minus|plus|times)\b.{0,12}-?\d|"
+        r"\bmultiply by\s*-?\d",
+        text,
+    ):
+        return "math"
+    if re.search(
+        r"\b(what is|what are|who is|where is|when did|why does|how does|explain|define|"
+        r"difference between|name one|name a|name the)\b",
+        text,
+    ):
+        return "factual knowledge"
     return "unknown"
