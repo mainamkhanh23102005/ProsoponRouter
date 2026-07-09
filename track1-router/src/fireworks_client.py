@@ -140,6 +140,7 @@ def build_payload(policy: config.CategoryPolicy, prompt: str) -> dict[str, Any]:
         "model": normalize_model_id(policy.model),
         "temperature": 0,
         "max_tokens": policy.max_tokens,
+        "thinking": {"type": "disabled"},
         "messages": [{"role": "user", "content": prompt}],
     }
     if policy.stop:
@@ -172,7 +173,7 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
     if category == "logical reasoning":
         return f"Answer only with the final answer, no explanation.\n{text}"
     if category == "factual knowledge":
-        return f"Answer only the fact, no explanation.\n{text}"
+        return f"Answer all parts in one compact sentence using semicolons; include only the requested facts, no background, no markdown.\n{text}"
     return f"Answer only.\n{text}"
 
 

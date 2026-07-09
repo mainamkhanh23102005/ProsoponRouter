@@ -16,7 +16,20 @@ SPACY_LABELS = {
     "GPE": "LOCATION",
     "LOC": "LOCATION",
     "FAC": "LOCATION",
+    "DATE": "DATE",
 }
+KNOWN_COMMON_ORGS = (
+    "Stanford University",
+    "Google DeepMind",
+    "Fireworks AI",
+    "Anthropic",
+    "Microsoft",
+    "DeepMind",
+    "OpenAI",
+    "Google",
+    "Meta",
+    "MIT",
+)
 
 
 def solve(task: dict[str, Any]) -> tuple[str | None, float]:
@@ -33,6 +46,8 @@ def solve(task: dict[str, Any]) -> tuple[str | None, float]:
             if label is None or overlaps_existing(ent.start_char, ent.end_char, entities):
                 continue
             entities.append((ent.start_char, ent.end_char, {"text": ent.text, "label": label}))
+
+    apply_known_common_orgs(text, entities)
 
     if not entities:
         return "NONE", 0.92
@@ -52,6 +67,34 @@ def load_spacy_model() -> Any | None:
 
 def overlaps_existing(start: int, end: int, entities: list[tuple[int, int, dict[str, str]]]) -> bool:
     return any(start < existing_end and end > existing_start for existing_start, existing_end, _ in entities)
+
+
+def apply_known_common_orgs(text: str, entities: list[tuple[int, int, dict[str, str]]]) -> None:
+    for org_name in KNOWN_COMMON_ORGS:
+        pattern = re.compile(rf"(?<!\w){re.escape(org_name)}(?!\w)")
+        for match in pattern.finditer(text):
+            add_or_correct_known_org(match.start(), match.end(), org_name, entities)
+
+
+def add_or_correct_known_org(
+    start: int,
+    end: int,
+    org_name: str,
+    entities: list[tuple[int, int, dict[str, str]]],
+) -> None:
+    for existing_start, existing_end, entity in entities:
+        if existing_start == start and existing_end == end and entity["label"] == "ORG":
+            return
+        if start < existing_end and end > existing_start and entity["label"] == "ORG":
+            if (existing_end - existing_start) >= (end - start):
+                return
+
+    entities[:] = [
+        item
+        for item in entities
+        if not (start < item[1] and end > item[0])
+    ]
+    entities.append((start, end, {"text": org_name, "label": "ORG"}))
 
 
 def format_entities(entities: list[dict[str, str]]) -> str:

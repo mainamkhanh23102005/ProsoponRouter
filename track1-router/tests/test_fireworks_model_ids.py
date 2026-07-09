@@ -37,7 +37,13 @@ class FireworksModelIdTest(unittest.TestCase):
                 payload = build_payload(policy, "Prompt")
                 self.assertEqual(payload["model"], "accounts/fireworks/models/minimax-m3")
 
+    def test_payload_disables_thinking_without_conflicting_reasoning_effort(self) -> None:
+        for category in config.POLICY:
+            with self.subTest(category=category):
+                payload = build_payload(config.POLICY[category], "Prompt")
+                self.assertEqual(payload["thinking"], {"type": "disabled"})
+                self.assertNotIn("reasoning_effort", payload)
+
 
 if __name__ == "__main__":
     unittest.main()
-

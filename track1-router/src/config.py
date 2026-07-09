@@ -57,11 +57,11 @@ POLICY: dict[str, CategoryPolicy] = {
     "ner": CategoryPolicy(True, CHEAPEST_MODEL, 96, 0.90),
     "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 80, 0.92),
     "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 120),
-    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 64, stop=("\n",)),
+    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 160),
     "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 260, retry_on_invalid=True),
     "logical reasoning": CategoryPolicy(False, CHEAPEST_MODEL, 150),
     "code generation": CategoryPolicy(False, CHEAPEST_MODEL, 420, retry_on_invalid=True),
-    "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 48),
+    "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 90),
 }
 
 FALLBACK_ANSWERS: dict[str, Any] = {

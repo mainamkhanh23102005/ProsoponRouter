@@ -21,6 +21,15 @@ class NerSolverTest(unittest.TestCase):
         self.assertIsNone(answer)
         self.assertEqual(confidence, 0.0)
 
+    def parse_entities(self, answer: str) -> list[tuple[str, str]]:
+        if answer == "NONE":
+            return []
+        entities = []
+        for item in answer.split("; "):
+            label, text = item.split(": ", 1)
+            entities.append((label, text))
+        return entities
+
     def test_numeric_date_regex(self) -> None:
         self.assert_entities("The launch date is 2026-07-11.", "DATE: 2026-07-11")
 
@@ -57,6 +66,32 @@ class NerSolverTest(unittest.TestCase):
             "The team moved from Paris to Berlin.",
             "LOCATION: Paris; LOCATION: Berlin",
         )
+
+    @unittest.skipUnless(spacy_model_available(), "en_core_web_sm is not installed")
+    def test_hard_ai_orgs_are_corrected_by_gazetteer(self) -> None:
+        text = (
+            "Dr. Maria Chen, a researcher at Stanford University, presented findings alongside "
+            "representatives from both Google DeepMind and OpenAI at a conference in Geneva "
+            "on March 3rd, 2026."
+        )
+        answer, confidence = ner_solver.solve({"text": text})
+        entities = self.parse_entities(answer or "")
+
+        self.assertGreaterEqual(confidence, 0.90)
+        self.assertIn(("PERSON", "Maria Chen"), entities)
+        self.assertIn(("ORG", "Stanford University"), entities)
+        self.assertIn(("ORG", "Google DeepMind"), entities)
+        self.assertIn(("ORG", "OpenAI"), entities)
+        self.assertNotIn(("LOCATION", "OpenAI"), entities)
+        self.assertIn(("LOCATION", "Geneva"), entities)
+        self.assertIn(("DATE", "March 3rd, 2026"), entities)
+
+    def test_known_org_gazetteer_does_not_duplicate_existing_org(self) -> None:
+        answer, confidence = ner_solver.solve({"text": "Microsoft opened a research lab."})
+        entities = self.parse_entities(answer or "")
+
+        self.assertGreaterEqual(confidence, 0.90)
+        self.assertEqual(entities.count(("ORG", "Microsoft")), 1)
 
 
 if __name__ == "__main__":
