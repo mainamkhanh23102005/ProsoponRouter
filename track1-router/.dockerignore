@@ -1,0 +1,5 @@
+.git
+.env
+out/
+demo_app.py
+requirements-demo.txt
