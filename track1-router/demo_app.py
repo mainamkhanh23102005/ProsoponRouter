@@ -62,6 +62,7 @@ def init_state() -> None:
     st.session_state.setdefault("cascade_tokens", 0)
     st.session_state.setdefault("baseline_tokens", 0)
     st.session_state.setdefault("log", [])
+    st.session_state.setdefault("last_result", None)
 
 
 def reset_session() -> None:
@@ -118,6 +119,43 @@ def run_baseline(prompt: str) -> tuple[str, int, str | None]:
 def truncated(text: str, length: int = 90) -> str:
     normalized = " ".join(text.split())
     return normalized if len(normalized) <= length else normalized[: length - 1] + "…"
+
+
+def render_result_panel(result: dict[str, object]) -> None:
+    category = str(result["category"])
+    answer = result["answer"]
+    meta = result["meta"]
+    cascade_tokens = int(result["cascade_tokens"])
+    compare_baseline = bool(result["compare_baseline"])
+    baseline_answer = str(result.get("baseline_answer", ""))
+    baseline_tokens = int(result.get("baseline_tokens") or 0)
+    baseline_error = result.get("baseline_error")
+
+    st.subheader("Pipeline")
+    render_pipeline(category, meta)
+
+    st.subheader("Result")
+    result_cols = st.columns([1, 1, 1])
+    with result_cols[0]:
+        st.markdown(badge(category, "#344054"), unsafe_allow_html=True)
+    with result_cols[1]:
+        path = str(meta.get("path", "fallback"))
+        st.markdown(badge(path, PATH_COLORS.get(path, "#667085")), unsafe_allow_html=True)
+    with result_cols[2]:
+        st.metric("Tokens used", cascade_tokens)
+
+    if category in {"code debugging", "code generation"}:
+        st.code(str(answer), language="python")
+    else:
+        st.write(answer)
+
+    if compare_baseline:
+        st.subheader("CascadeSolo vs naive baseline")
+        st.bar_chart({"tokens": {"CascadeSolo": cascade_tokens, "Naive baseline": baseline_tokens}})
+        if baseline_error:
+            st.warning(f"Baseline error: {baseline_error}")
+        with st.expander("Naive baseline answer"):
+            st.write(baseline_answer)
 
 
 init_state()
@@ -194,31 +232,20 @@ if st.button("Run through CascadeSolo", type="primary", use_container_width=True
         }
     )
 
-    st.subheader("Pipeline")
-    render_pipeline(category, meta)
+    st.session_state.last_result = {
+        "category": category,
+        "answer": answer,
+        "meta": meta,
+        "cascade_tokens": cascade_tokens,
+        "compare_baseline": compare_baseline,
+        "baseline_answer": baseline_answer,
+        "baseline_tokens": baseline_tokens,
+        "baseline_error": baseline_error,
+    }
+    st.rerun()
 
-    st.subheader("Result")
-    result_cols = st.columns([1, 1, 1])
-    with result_cols[0]:
-        st.markdown(badge(category, "#344054"), unsafe_allow_html=True)
-    with result_cols[1]:
-        path = str(meta.get("path", "fallback"))
-        st.markdown(badge(path, PATH_COLORS.get(path, "#667085")), unsafe_allow_html=True)
-    with result_cols[2]:
-        st.metric("Tokens used", cascade_tokens)
-
-    if category in {"code debugging", "code generation"}:
-        st.code(str(answer), language="python")
-    else:
-        st.write(answer)
-
-    if compare_baseline:
-        st.subheader("CascadeSolo vs naive baseline")
-        st.bar_chart({"tokens": {"CascadeSolo": cascade_tokens, "Naive baseline": baseline_tokens or 0}})
-        if baseline_error:
-            st.warning(f"Baseline error: {baseline_error}")
-        with st.expander("Naive baseline answer"):
-            st.write(baseline_answer)
+if st.session_state.last_result:
+    render_result_panel(st.session_state.last_result)
 
 if st.session_state.log:
     st.subheader("Session query log")
