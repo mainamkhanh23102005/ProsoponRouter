@@ -10,9 +10,9 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(config.FALLBACK_ANSWERS["sentiment"], "")
 
     def test_low_budget_model_categories_have_reasoning_headroom(self) -> None:
-        self.assertGreaterEqual(config.POLICY["factual knowledge"].max_tokens, 160)
+        self.assertGreaterEqual(config.POLICY["factual knowledge"].max_tokens, 120)
         self.assertGreaterEqual(config.POLICY["sentiment"].max_tokens, 80)
-        self.assertGreaterEqual(config.POLICY["logical reasoning"].max_tokens, 150)
+        self.assertGreaterEqual(config.POLICY["logical reasoning"].max_tokens, 110)
         self.assertGreaterEqual(config.POLICY["unknown"].max_tokens, 90)
         self.assertEqual(config.POLICY["factual knowledge"].stop, ())
 

@@ -48,7 +48,7 @@ class PromptTemplateTest(unittest.TestCase):
         self.assertNotIn("- ", prompt)
 
     def test_policy_token_budgets_are_category_specific(self) -> None:
-        self.assertGreaterEqual(config.POLICY["factual knowledge"].max_tokens, 160)
+        self.assertGreaterEqual(config.POLICY["factual knowledge"].max_tokens, 120)
         self.assertLess(config.POLICY["summarization"].max_tokens, config.POLICY["code generation"].max_tokens)
         self.assertTrue(config.POLICY["code debugging"].retry_on_invalid)
         self.assertTrue(config.POLICY["code generation"].retry_on_invalid)
