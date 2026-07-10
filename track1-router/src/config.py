@@ -57,9 +57,9 @@ POLICY: dict[str, CategoryPolicy] = {
     "ner": CategoryPolicy(True, CHEAPEST_MODEL, 96, 0.90),
     "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 80, 0.92),
     "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 120),
-    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 160),
+    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 80),
     "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 260, retry_on_invalid=True),
-    "logical reasoning": CategoryPolicy(False, CHEAPEST_MODEL, 150),
+    "logical reasoning": CategoryPolicy(False, CHEAPEST_MODEL, 80),
     "code generation": CategoryPolicy(False, CHEAPEST_MODEL, 420, retry_on_invalid=True),
     "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 90),
 }
