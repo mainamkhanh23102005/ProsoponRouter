@@ -36,6 +36,31 @@ class LocalLlmCascadeTest(unittest.TestCase):
         self.assertEqual(meta["path"], "fireworks")
         fake_client.complete.assert_called_once()
 
+    def test_renamed_local_code_answer_falls_through_to_fireworks(self) -> None:
+        fake_client = Mock()
+        fake_client.complete.return_value = FireworksResult(
+            answer="def larger(a, b):\n    return a if a > b else b"
+        )
+        with (
+            patch.object(cascade.local_llm, "can_attempt", return_value=True),
+            patch.object(
+                cascade.local_llm,
+                "complete",
+                return_value=FireworksResult(
+                    answer="def find_larger(a, b):\n    return a if a > b else b"
+                ),
+            ),
+            patch.object(cascade, "CLIENT", fake_client),
+        ):
+            answer, meta = cascade.route_task(
+                {"prompt": "Write a Python function that returns the larger of two numbers."},
+                "code generation",
+            )
+
+        self.assertEqual(answer, "def larger(a, b):\n    return a if a > b else b")
+        self.assertEqual(meta["path"], "fireworks")
+        fake_client.complete.assert_called_once()
+
     def test_sentiment_model_answer_accepts_dash_separator(self) -> None:
         ok, answer, error = cascade.validate_model_answer(
             {"prompt": "Classify sentiment."},
@@ -52,6 +77,33 @@ class LocalLlmCascadeTest(unittest.TestCase):
             {"prompt": "Summarize this text."},
             "summarization",
             "Thinking Process:\n1. Analyze the request.\nFinal summary.",
+        )
+
+        self.assertFalse(ok)
+        self.assertIn("analysis instead of final answer", error or "")
+
+    def test_numbered_analysis_answer_is_rejected(self) -> None:
+        ok, answer, error = cascade.validate_model_answer(
+            {"prompt": "Summarize this text."},
+            "summarization",
+            "1. **Analyze the Request:** The user wants a summary.\n\nFinal summary.",
+        )
+
+        self.assertFalse(ok)
+        self.assertIn("analysis instead of final answer", error or "")
+
+    def test_logic_reasoning_trace_for_bloops_case_is_rejected(self) -> None:
+        prompt = "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?"
+        local_answer = (
+            "The user is asking a question about logical deduction. This is a classic "
+            "syllogism. Premise 1: all bloops are razzies. Premise 2: all razzies are "
+            "lazzies. Therefore"
+        )
+
+        ok, answer, error = cascade.validate_model_answer(
+            {"prompt": prompt},
+            "logical reasoning",
+            local_answer,
         )
 
         self.assertFalse(ok)

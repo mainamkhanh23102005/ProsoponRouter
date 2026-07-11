@@ -99,7 +99,7 @@ def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> t
     if answer is None:
         return False, answer, None
     answer = normalize_model_answer(category, answer)
-    if is_meta_answer(answer):
+    if is_meta_answer(category, answer):
         return False, answer, f"model returned analysis instead of final answer: {str(answer)[:80]!r}"
     if not validate_answer(category, answer):
         return False, answer, f"expected {category} answer format; got {answer!r}"
@@ -122,11 +122,13 @@ def normalize_model_answer(category: str, answer: Any) -> Any:
     return f"{label}: {reason}"
 
 
-def is_meta_answer(answer: Any) -> bool:
+def is_meta_answer(category: str, answer: Any) -> bool:
     if not isinstance(answer, str):
         return False
+    if category in {"code debugging", "code generation"}:
+        return False
     lowered = answer.lstrip().lower()
-    return lowered.startswith((
+    if lowered.startswith((
         "thinking process",
         "analysis:",
         "reasoning:",
@@ -135,4 +137,54 @@ def is_meta_answer(answer: Any) -> bool:
         "i need to",
         "i should",
         "let me",
-    ))
+    )):
+        return True
+    if has_reasoning_scaffold(lowered):
+        return True
+    if has_truncated_reasoning_shape(lowered):
+        return True
+    return is_too_long_for_final_answer(category, answer)
+
+
+def has_reasoning_scaffold(lowered: str) -> bool:
+    patterns = (
+        r"\bthe user (is asking|wants|asked)\b",
+        r"\bthis is a classic syllogism\b",
+        r"\bpremise\s*\d+\b",
+        r"\bnumbered reasoning steps?\b",
+        r"\bconstraint\s*\d+\b",
+        r"\b(?:first|second|third),\s+i\b",
+        r"\bi need to\b",
+        r"\bi should\b",
+        r"\blet me\b",
+        r"^\d+[.)]\s+\*{0,2}(analyze|identify|list|determine)\b",
+        r"\n\s*\d+[.)]\s+\*{0,2}(analyze|identify|list|determine)\b",
+    )
+    return any(re.search(pattern, lowered) for pattern in patterns)
+
+
+def has_truncated_reasoning_shape(lowered: str) -> bool:
+    stripped = lowered.rstrip()
+    if not stripped:
+        return False
+    if re.search(r"\b(therefore|because|and|or|so|then|but|with|from|to|the|a|an)\s*$", stripped):
+        return True
+    if re.search(r"[:;,]\s*$", stripped):
+        return True
+    if re.search(r"\n\s*[-*]\s+\S.{0,80}$", stripped) and not re.search(r"[.!?)]\s*$", stripped):
+        return True
+    return False
+
+
+def is_too_long_for_final_answer(category: str, answer: str) -> bool:
+    words = answer.split()
+    lines = [line for line in answer.splitlines() if line.strip()]
+    if category == "logical reasoning":
+        return len(words) > 24 or len(lines) > 2
+    if category == "math":
+        return len(words) > 12 or len(lines) > 1
+    if category == "sentiment":
+        return len(words) > 40 or len(lines) > 3
+    if category == "factual knowledge":
+        return len(words) > 80 or len(lines) > 4
+    return False

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 import subprocess
@@ -10,6 +11,8 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from src.task_utils import task_text
 
 
 TIMEOUT_SECONDS = 5
@@ -33,6 +36,20 @@ def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationRes
     code = parsed.code
     if not code:
         return CodeValidationResult(False, code, "empty code answer")
+
+    expected_names = expected_function_names(task)
+    if expected_names:
+        generated_names, parse_error = top_level_function_names(code)
+        if parse_error:
+            return CodeValidationResult(False, code, parse_error)
+        if not generated_names & expected_names:
+            expected = ", ".join(sorted(expected_names))
+            actual = ", ".join(sorted(generated_names)) or "none"
+            return CodeValidationResult(
+                False,
+                code,
+                f"function signature mismatch: expected {expected}; generated {actual}",
+            )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
@@ -79,6 +96,64 @@ def strip_code_fences(answer: str) -> str:
     if match:
         answer = answer[: match.start()] + match.group(1) + answer[match.end() :]
     return answer.replace("```", "").strip()
+
+
+def expected_function_names(task: dict[str, Any]) -> set[str]:
+    names: set[str] = set()
+    for test in iter_tests(task):
+        call = test.get("call")
+        if isinstance(call, str):
+            name = function_name_from_call(call)
+            if name:
+                names.add(name)
+
+    text = task_text(task)
+    names.update(function_names_from_prompt(text))
+    return names
+
+
+def function_name_from_call(call: str) -> str | None:
+    try:
+        node = ast.parse(call, mode="eval").body
+    except SyntaxError:
+        return None
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Name):
+            return node.func.id
+        if isinstance(node.func, ast.Attribute):
+            return node.func.attr
+    return None
+
+
+def function_names_from_prompt(text: str) -> set[str]:
+    names: set[str] = set()
+    patterns = (
+        r"\bdef\s+([A-Za-z_]\w*)\s*\(",
+        r"`([A-Za-z_]\w*)\s*\([^`]*\)`",
+        r"\bfunction\s+([A-Za-z_]\w*)\s*\(",
+        r"\bfunction\s+(?:called|named)\s+`?([A-Za-z_]\w*)`?",
+        r"\b(?:called|named)\s+`?([A-Za-z_]\w*)`?\s+function\b",
+        r"\bfunction\s+that\s+returns\s+the\s+([A-Za-z_]\w*)\s+of\b",
+    )
+    for pattern in patterns:
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+            name = match.group(1)
+            if name and name.isidentifier():
+                names.add(name)
+    return names
+
+
+def top_level_function_names(code: str) -> tuple[set[str], str | None]:
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as exc:
+        return set(), f"SyntaxError: {exc}"
+    names = {
+        node.name
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    return names, None
 
 
 def iter_tests(task: dict[str, Any]):
