@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from src import config
 from src.code_validation import validate_code_answer
 from src.fireworks_client import FireworksClient
+from src import local_llm
 from src.solvers import get_solver
 from src.validate import validate_answer
 
@@ -37,6 +39,20 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
     else:
         deterministic_error = "free_disabled"
 
+    local_error = None
+    if local_llm.can_attempt(task, category):
+        local_result = local_llm.complete(task, category)
+        local_ok, local_answer, local_failure_feedback = validate_model_answer(task, category, local_result.answer)
+        if local_ok:
+            return local_answer, {
+                "path": "local_llm",
+                "tokens": 0,
+                "local_tokens": local_result.total_tokens,
+                "attempts": 1,
+                "error": deterministic_error,
+            }
+        local_error = local_failure_feedback or local_result.error
+
     result = CLIENT.complete(task, category)
     answer_ok, accepted_answer, failure_feedback = validate_model_answer(task, category, result.answer)
     if answer_ok:
@@ -44,7 +60,7 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
             "path": "fireworks",
             "tokens": result.total_tokens,
             "attempts": 1,
-            "error": deterministic_error,
+            "error": local_error or deterministic_error,
         }
 
     total_tokens = result.total_tokens
@@ -82,6 +98,9 @@ def is_empty_content_error(error: str | None) -> bool:
 def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> tuple[bool, Any, str | None]:
     if answer is None:
         return False, answer, None
+    answer = normalize_model_answer(category, answer)
+    if is_meta_answer(answer):
+        return False, answer, f"model returned analysis instead of final answer: {str(answer)[:80]!r}"
     if not validate_answer(category, answer):
         return False, answer, f"expected {category} answer format; got {answer!r}"
     if category in {"code debugging", "code generation"}:
@@ -90,3 +109,30 @@ def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> t
             return False, answer, validation.error
         return True, validation.code, None
     return True, answer, None
+
+
+def normalize_model_answer(category: str, answer: Any) -> Any:
+    if category != "sentiment" or not isinstance(answer, str):
+        return answer
+    match = re.match(r"^\s*(positive|negative|neutral)\b\s*(?::|-)?\s*(.*)$", answer, re.IGNORECASE | re.S)
+    if not match:
+        return answer
+    label = match.group(1).lower()
+    reason = " ".join(match.group(2).split()) or "model label"
+    return f"{label}: {reason}"
+
+
+def is_meta_answer(answer: Any) -> bool:
+    if not isinstance(answer, str):
+        return False
+    lowered = answer.lstrip().lower()
+    return lowered.startswith((
+        "thinking process",
+        "analysis:",
+        "reasoning:",
+        "the user wants",
+        "the user asked",
+        "i need to",
+        "i should",
+        "let me",
+    ))

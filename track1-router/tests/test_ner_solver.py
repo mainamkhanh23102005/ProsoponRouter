@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
 import unittest
 
 from src.solvers import ner_solver
@@ -92,6 +94,16 @@ class NerSolverTest(unittest.TestCase):
 
         self.assertGreaterEqual(confidence, 0.90)
         self.assertEqual(entities.count(("ORG", "Microsoft")), 1)
+
+    def test_dev_ner_examples_match_expected_outputs_without_spacy(self) -> None:
+        dataset = json.loads((Path(__file__).parents[1] / "eval" / "data" / "dev_tasks.json").read_text())
+        for task in dataset:
+            if task.get("category") != "ner":
+                continue
+            with self.subTest(task_id=task["id"]):
+                answer, confidence = ner_solver.solve(task)
+                self.assertEqual(answer, task["answer"])
+                self.assertGreaterEqual(confidence, 0.90)
 
 
 if __name__ == "__main__":

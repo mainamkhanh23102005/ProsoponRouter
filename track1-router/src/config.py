@@ -28,6 +28,17 @@ ACCURACY_THRESHOLD = float(os.getenv("ACCURACY_THRESHOLD", "0.95"))
 HTTP_TIMEOUT_SECONDS = float(os.getenv("HTTP_TIMEOUT_SECONDS", "15"))
 LATENCY_LIMIT_SECONDS = float(os.getenv("LATENCY_LIMIT_SECONDS", "540"))
 LATENCY_RESERVE_SECONDS = float(os.getenv("LATENCY_RESERVE_SECONDS", "1"))
+LOCAL_LLM_ENABLED = os.getenv("LOCAL_LLM", "0").strip().lower() not in {"0", "false", "no", "off"}
+LOCAL_LLM_URL = os.getenv("LOCAL_LLM_URL", "http://127.0.0.1:8080/v1")
+LOCAL_LLM_MODEL = os.getenv("LOCAL_LLM_MODEL", os.path.basename(os.getenv("MODEL_PATH", "local-llm")))
+LOCAL_LLM_CATEGORIES = _csv_env(
+    "LOCAL_LLM_CATEGORIES",
+    ("sentiment", "ner", "summarization", "code debugging", "code generation"),
+)
+LOCAL_LLM_MAX_PROMPT_CHARS = int(os.getenv("LOCAL_LLM_MAX_PROMPT_CHARS", "900"))
+LOCAL_LLM_TIMEOUT_SECONDS = float(os.getenv("LOCAL_LLM_TIMEOUT_SECONDS", "90"))
+LOCAL_LLM_HEALTH_RECHECK_SECONDS = float(os.getenv("LOCAL_LLM_HEALTH_RECHECK_SECONDS", "10"))
+LOCAL_LLM_FAILS_TO_DISABLE = int(os.getenv("LOCAL_LLM_FAILS_TO_DISABLE", "3"))
 
 VALID_CATEGORIES = {
     "math",

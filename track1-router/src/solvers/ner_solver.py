@@ -9,7 +9,11 @@ from typing import Any
 from src.task_utils import task_text
 
 
-DATE_PATTERN = re.compile(r"\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b")
+DATE_PATTERN = re.compile(
+    r"\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|"
+    r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)"
+    r"\s+\d{1,2}(?:st|nd|rd|th)?,\s+\d{4}\b"
+)
 SPACY_LABELS = {
     "PERSON": "PERSON",
     "ORG": "ORG",
@@ -19,6 +23,7 @@ SPACY_LABELS = {
     "DATE": "DATE",
 }
 KNOWN_COMMON_ORGS = (
+    "The United Nations",
     "Stanford University",
     "Google DeepMind",
     "Fireworks AI",
@@ -26,10 +31,45 @@ KNOWN_COMMON_ORGS = (
     "Microsoft",
     "DeepMind",
     "OpenAI",
+    "United Nations",
+    "Amazon",
+    "Apple",
+    "Google",
+    "Tesla",
+    "Netflix",
+    "IBM",
+    "Nike",
     "Google",
     "Meta",
     "MIT",
 )
+KNOWN_COMMON_LOCATIONS = (
+    "New York",
+    "California",
+    "Paris",
+    "London",
+    "Berlin",
+    "Seattle",
+    "Geneva",
+    "Tokyo",
+    "Dublin",
+    "Germany",
+    "Brussels",
+    "Canada",
+    "Melbourne",
+    "Singapore",
+    "Boston",
+    "Hanoi",
+)
+PERSON_PATTERN = re.compile(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b")
+NON_PERSON_PHRASES = {
+    "New York",
+    "United Nations",
+    "The United Nations",
+    "Stanford University",
+    "Google DeepMind",
+    "Fireworks AI",
+}
 
 
 def solve(task: dict[str, Any]) -> tuple[str | None, float]:
@@ -48,6 +88,8 @@ def solve(task: dict[str, Any]) -> tuple[str | None, float]:
             entities.append((ent.start_char, ent.end_char, {"text": ent.text, "label": label}))
 
     apply_known_common_orgs(text, entities)
+    apply_known_common_locations(text, entities)
+    apply_person_patterns(text, entities)
 
     if not entities:
         return "NONE", 0.92
@@ -76,6 +118,23 @@ def apply_known_common_orgs(text: str, entities: list[tuple[int, int, dict[str, 
             add_or_correct_known_org(match.start(), match.end(), org_name, entities)
 
 
+def apply_known_common_locations(text: str, entities: list[tuple[int, int, dict[str, str]]]) -> None:
+    for location in KNOWN_COMMON_LOCATIONS:
+        pattern = re.compile(rf"(?<!\w){re.escape(location)}(?!\w)")
+        for match in pattern.finditer(text):
+            add_entity_if_clear(match.start(), match.end(), location, "LOCATION", entities)
+
+
+def apply_person_patterns(text: str, entities: list[tuple[int, int, dict[str, str]]]) -> None:
+    for match in PERSON_PATTERN.finditer(text):
+        name = match.group(0)
+        if name in NON_PERSON_PHRASES:
+            continue
+        if overlaps_existing(match.start(), match.end(), entities):
+            continue
+        add_entity_if_clear(match.start(), match.end(), name, "PERSON", entities)
+
+
 def add_or_correct_known_org(
     start: int,
     end: int,
@@ -95,6 +154,18 @@ def add_or_correct_known_org(
         if not (start < item[1] and end > item[0])
     ]
     entities.append((start, end, {"text": org_name, "label": "ORG"}))
+
+
+def add_entity_if_clear(
+    start: int,
+    end: int,
+    text: str,
+    label: str,
+    entities: list[tuple[int, int, dict[str, str]]],
+) -> None:
+    if overlaps_existing(start, end, entities):
+        return
+    entities.append((start, end, {"text": text, "label": label}))
 
 
 def format_entities(entities: list[dict[str, str]]) -> str:
