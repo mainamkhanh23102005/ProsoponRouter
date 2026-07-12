@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib
 import os
 import unittest
+from unittest.mock import patch
 
 
 class DryRunModeTest(unittest.TestCase):
@@ -33,7 +34,8 @@ class DryRunModeTest(unittest.TestCase):
     def route_with_mode(self, mode: str):
         os.environ["DRY_RUN_MODE"] = mode
         cascade = self.reload_modules()
-        return cascade.route_task({"prompt": "Summarize this: AMD builds AI software."}, "summarization")
+        with patch.object(cascade, "get_solver", return_value=None):
+            return cascade.route_task({"prompt": "Summarize this: AMD builds AI software."}, "summarization")
 
     def test_success_mode_passes_through(self) -> None:
         answer, meta = self.route_with_mode("success")

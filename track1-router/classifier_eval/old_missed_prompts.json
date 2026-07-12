@@ -1,0 +1,7 @@
+[
+  {"task_id":"old-fact-1","prompt":"Which planet is known as the Red Planet?"},
+  {"task_id":"old-fact-2","prompt":"Who wrote Pride and Prejudice?"},
+  {"task_id":"old-fact-3","prompt":"What protocol translates domain names into IP addresses?"},
+  {"task_id":"old-summary-1","prompt":"Provide a concise summarization of this passage: Trees absorb carbon dioxide."},
+  {"task_id":"old-codegen-1","prompt":"Generate Python code that returns the smallest item in a list."}
+]

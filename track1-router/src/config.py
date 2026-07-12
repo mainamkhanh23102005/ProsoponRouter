@@ -34,7 +34,13 @@ LOCAL_LLM_MODEL = os.getenv("LOCAL_LLM_MODEL", os.path.basename(os.getenv("MODEL
 LOCAL_LLM_CATEGORIES = _csv_env(
     "LOCAL_LLM_CATEGORIES",
     (
+        "math",
+        "ner",
+        "sentiment",
+        "summarization",
+        "factual knowledge",
         "code debugging",
+        "logical reasoning",
         "code generation",
     ),
 )
@@ -69,9 +75,9 @@ class CategoryPolicy:
 
 POLICY: dict[str, CategoryPolicy] = {
     "math": CategoryPolicy(True, CHEAPEST_MODEL, 144, 0.95),
-    "ner": CategoryPolicy(False, CHEAPEST_MODEL, 96, 0.90),
+    "ner": CategoryPolicy(True, CHEAPEST_MODEL, 96, 0.90),
     "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 80, 0.92, reasoning_mode="reasoning_none"),
-    "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 120),
+    "summarization": CategoryPolicy(True, CHEAPEST_MODEL, 320, 0.90),
     "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 200, 0.99),
     "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 260, retry_on_invalid=True),
     "logical reasoning": CategoryPolicy(True, CHEAPEST_MODEL, 288, 0.99),

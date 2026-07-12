@@ -1,0 +1,47 @@
+[
+  {
+    "task_id": "fresh-fact-1",
+    "category": "factual knowledge",
+    "prompt": "Answer this factual knowledge question: Which planet is known as the Red Planet?"
+  },
+  {
+    "task_id": "fresh-fact-2",
+    "category": "factual knowledge",
+    "prompt": "Factual knowledge: Who wrote the novel Pride and Prejudice?"
+  },
+  {
+    "task_id": "fresh-fact-3",
+    "category": "factual knowledge",
+    "prompt": "Answer this factual knowledge question: What protocol translates domain names into IP addresses?"
+  },
+  {
+    "task_id": "fresh-summary-1",
+    "category": "summarization",
+    "prompt": "Summarize this text: Solar panels convert sunlight into electricity. Battery storage can preserve excess energy for use at night."
+  },
+  {
+    "task_id": "fresh-summary-2",
+    "category": "summarization",
+    "prompt": "Summarize the following in exactly two sentences, no more: Edge computing processes data near the device that generates it. This can reduce latency and bandwidth usage. Cloud systems remain useful for centralized storage and large-scale analysis."
+  },
+  {
+    "task_id": "fresh-summary-3",
+    "category": "summarization",
+    "prompt": "Provide a concise summarization of this passage: PostgreSQL is an open-source relational database. It supports transactions, advanced indexing, and JSON data. Developers often choose it for applications requiring reliability."
+  },
+  {
+    "task_id": "fresh-codegen-1",
+    "category": "code generation",
+    "prompt": "Write a Python function `count_vowels(text)` that returns the number of vowels in a string, ignoring case."
+  },
+  {
+    "task_id": "fresh-codegen-2",
+    "category": "code generation",
+    "prompt": "Generate Python code for a function named clamp that takes value, low, and high and restricts value to the inclusive range."
+  },
+  {
+    "task_id": "fresh-codegen-3",
+    "category": "code generation",
+    "prompt": "Write a Python function `unique_preserving_order(items)` that removes duplicates while retaining the first occurrence order."
+  }
+]

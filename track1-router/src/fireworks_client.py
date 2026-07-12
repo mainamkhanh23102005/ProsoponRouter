@@ -11,6 +11,7 @@ from typing import Any
 
 from src import config
 from src.task_utils import task_text
+from src.code_validation import expected_function_names
 
 
 @dataclass
@@ -174,8 +175,10 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
             f"{text}"
         )
     if category == "code generation":
+        names = sorted(expected_function_names(task))
+        required_name = f" Required function name: {names[0]}." if len(names) == 1 else ""
         return (
-            "Return Python code, then '# SELF_CHECK:' and 2-3 assert statements. "
+            "Return Python code, then '# SELF_CHECK:' and 2-3 assert statements. " + required_name + " "
             "No markdown, no explanation.\n"
             f"{text}"
         )

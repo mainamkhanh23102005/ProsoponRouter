@@ -1,0 +1,33 @@
+[
+  {"task_id":"new-math-1","prompt":"Compute 14 * 6 for the report."},
+  {"task_id":"new-math-2","prompt":"What is half of 50 minus 7?"},
+  {"task_id":"new-math-3","prompt":"A reservoir starts with 900 liters and drains at 10 liters per minute for 12 minutes. How many liters remain?"},
+
+  {"task_id":"new-sentiment-1","prompt":"Determine the sentiment of this feedback: The setup was effortless and the results were excellent."},
+  {"task_id":"new-sentiment-2","prompt":"Label the sentiment of this comment: The application crashes constantly and support is awful."},
+  {"task_id":"new-sentiment-3","prompt":"Analyze the sentiment of this sentence: The package arrived on Thursday at noon."},
+
+  {"task_id":"new-ner-1","prompt":"Identify the named entities in: Grace Hopper spoke at Harvard University in Boston on June 2nd, 2025."},
+  {"task_id":"new-ner-2","prompt":"List people, organizations, locations, and dates from: Linus Torvalds visited Intel in Helsinki."},
+  {"task_id":"new-ner-3","prompt":"Find entities in this sentence: Mozilla opened an office in Toronto on 2025-09-14."},
+
+  {"task_id":"new-summary-1","prompt":"Condense this passage into one sentence: Coral reefs support diverse marine life. Rising ocean temperatures threaten their survival."},
+  {"task_id":"new-summary-2","prompt":"Give a brief synopsis of the following: Electric buses reduce urban tailpipe emissions. They can also lower noise pollution."},
+  {"task_id":"new-summary-3","prompt":"Create a short overview of this text: WebAssembly runs portable binary code in browsers. It complements JavaScript for performance-sensitive workloads."},
+
+  {"task_id":"new-fact-1","prompt":"Which ocean lies between Africa and Australia?"},
+  {"task_id":"new-fact-2","prompt":"Who developed the first successful polio vaccine?"},
+  {"task_id":"new-fact-3","prompt":"Where does the Nile River empty into the sea?"},
+
+  {"task_id":"new-debug-1","prompt":"Debug this Python code: def square(x): return x + x"},
+  {"task_id":"new-debug-2","prompt":"Find the bug in this function: def is_even(n): return n % 2 == 1"},
+  {"task_id":"new-debug-3","prompt":"Fix the bug: def first(items): return items[1]"},
+
+  {"task_id":"new-logic-1","prompt":"If all ravens are birds and all birds have wings, must every raven have wings?"},
+  {"task_id":"new-logic-2","prompt":"Three people each own a different instrument. Ana does not own the piano. Bo owns the violin. Who can own the piano?"},
+  {"task_id":"new-logic-3","prompt":"Mina sits immediately before Omar, and Omar sits immediately before Pia. Who must sit after Mina?"},
+
+  {"task_id":"new-codegen-1","prompt":"Produce a Python function named word_lengths that maps words to their lengths."},
+  {"task_id":"new-codegen-2","prompt":"Build a function `rotate_left(items)` that moves the first item to the end."},
+  {"task_id":"new-codegen-3","prompt":"Generate a Python script that counts non-empty lines in a text file."}
+]

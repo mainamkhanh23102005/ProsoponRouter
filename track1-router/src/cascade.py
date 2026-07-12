@@ -6,7 +6,7 @@ import re
 from typing import Any
 
 from src import config
-from src.code_validation import validate_code_answer
+from src.code_validation import extract_code, validate_code_answer
 from src.fireworks_client import FireworksClient
 from src import local_llm
 from src.solvers import get_solver
@@ -112,12 +112,12 @@ def validate_model_answer(
     if not validate_answer(category, answer):
         return False, answer, f"expected {category} answer format; got {answer!r}"
     if category in {"code debugging", "code generation"}:
-        validation = validate_code_answer(task, str(answer), require_task_tests=local_candidate)
+        if local_candidate:
+            answer = extract_code(str(answer))
+        validation = validate_code_answer(task, str(answer), require_task_tests=False)
         if not validation.ok:
             return False, answer, validation.error
         return True, validation.code, None
-    if local_candidate:
-        return False, answer, f"local {category} answer is not independently verifiable"
     return True, answer, None
 
 
@@ -127,6 +127,9 @@ def normalize_model_answer(category: str, answer: Any) -> Any:
     if category in {"math", "logical reasoning"}:
         match = re.search(r"(?:^|\n)\s*Answer:\s*(.+?)\s*$", answer, re.IGNORECASE)
         return match.group(1).strip() if match else answer
+    if category == "factual knowledge":
+        direct = extract_factual_answer(answer)
+        return direct or answer
     if category != "sentiment":
         return answer
     match = re.match(r"^\s*(positive|negative|neutral)\b\s*(?::|-)?\s*(.*)$", answer, re.IGNORECASE | re.S)
@@ -135,6 +138,105 @@ def normalize_model_answer(category: str, answer: Any) -> Any:
     label = match.group(1).lower()
     reason = " ".join(match.group(2).split()) or "model label"
     return f"{label}: {reason}"
+
+
+def extract_factual_answer(answer: str) -> str | None:
+    candidates: list[tuple[int, int, str]] = []
+    for raw_line in answer.splitlines():
+        line = re.sub(r"^\s*(?:[*-]\s*)?(?:\d+[.)]\s*)?", "", raw_line).strip()
+        line = line.replace("**", "").replace("__", "")
+        if not line:
+            continue
+        if re.search(r"\?.*\b(?:yes|no|n/?a)\b", line, re.I):
+            continue
+
+        if ":" in line:
+            prefix, remainder = line.split(":", 1)
+            if is_factual_meta_sentence(prefix) and remainder.strip():
+                if re.search(r"\b(?:determine|recall|draft(?:ing)?)\b", prefix, re.I):
+                    line = remainder.strip()
+                else:
+                    continue
+
+        for sentence in re.split(r"(?<=[.!?])\s+", line):
+            sentence = sentence.strip(" \t*-_")
+            if not sentence or sentence.endswith("?") or is_factual_meta_sentence(sentence):
+                continue
+            score = factual_candidate_score(sentence)
+            if score > 0:
+                candidates.append((score, len(candidates), sentence))
+
+    if not candidates:
+        return None
+    selected = sorted(candidates, key=lambda item: (-item[0], item[1]))[:3]
+    return " ".join(item[2] for item in sorted(selected, key=lambda item: item[1]))
+
+
+def is_factual_meta_sentence(sentence: str) -> bool:
+    lowered = sentence.lower()
+    meta_patterns = (
+        r"\b(?:the user|the request|the question|core question)\b",
+        r"\b(?:constraint|concise|self[- ]correction|refinement|confidence|checklist)\b",
+        r"\b(?:draft(?:ing)?|formulate|identify|determine|analy[sz]e|review|ensure|plan|recall)\b",
+        r"^\s*state\s+(?:(?:the|a|an)\s+)?\S+",
+        r"\bprovide\s+(?:the|a|an)\s+(?:answer|developer|destination|fact|protocol|response)\b",
+        r"\b(?:answer every part|for comparisons|at most three sentences|no markdown|not applicable)\b",
+        r"\b(?:sentence|step)\s*\d+\b",
+        r"\b(?:i need|i should|i will|i must|let me)\b",
+        r"\b(?:start with|explain the|mention the|provide context|check length)\b",
+        r"\b(?:optional|elaboration|output generation|final output)\b",
+    )
+    return any(re.search(pattern, lowered) for pattern in meta_patterns)
+
+
+def is_substantive_factual_sentence(sentence: str) -> bool:
+    words = sentence.split()
+    if not words:
+        return False
+    stripped = sentence.strip(" .!?")
+    if stripped.lower() in {
+        "done", "yes", "no", "n/a", "not applicable", "sentence", "answer", "response"
+    }:
+        return False
+    if stripped.lower().startswith("n/a"):
+        return False
+    has_factual_predicate = bool(re.search(
+            r"\b(?:is|are|was|were|has|have|lies|flows|empties|developed|invented|wrote|"
+            r"discovered|founded|created|attributed|located|uses|translates|became|separates|contains|"
+            r"ended|surrendered|absorbs?|composed|represents)\b",
+            sentence,
+            re.I,
+        ))
+    if has_factual_predicate:
+        return True
+    if len(words) < 5:
+        return is_known_short_factual_answer(stripped)
+    return False
+
+
+def is_known_short_factual_answer(value: str) -> bool:
+    if re.fullmatch(r"[-+]?\d+(?:\.\d+)?(?:%|\s+[A-Za-z]+)?", value):
+        return True
+    if re.fullmatch(r"[A-Za-z]+", value):
+        return value.lower() not in {"done", "sentence", "answer", "response", "thinking", "process"}
+    return bool(re.fullmatch(r"(?:[A-Z][\w'-]*)(?:\s+(?:of|the|and|[A-Z][\w'-]*)){0,3}", value))
+
+
+def factual_candidate_score(sentence: str) -> int:
+    if not is_substantive_factual_sentence(sentence):
+        return 0
+    score = 1
+    if re.search(r"\b(?:is|are|was|were|has|have|lies|flows|empties|developed|invented|wrote|"
+                 r"discovered|founded|created|attributed|located|uses|translates|became|separates|contains|"
+                 r"ended|surrendered|absorbs?|composed|represents)\b", sentence, re.I):
+        score += 4
+    if re.search(r"\b[A-Z][\w'-]+(?:\s+(?:of|the|and|[A-Z][\w'-]+)){1,3}\b", sentence):
+        score += 2
+    if re.search(r"\b\d{1,4}(?:[-/]\d{1,2})?\b", sentence):
+        score += 2
+    if is_known_short_factual_answer(sentence.strip(" .!?")):
+        score += 3
+    return score
 
 
 def is_meta_answer(category: str, answer: Any) -> bool:

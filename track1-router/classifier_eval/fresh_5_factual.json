@@ -1,0 +1,7 @@
+[
+  {"task_id":"extra-fact-1","prompt":"Which chemical element uses the symbol Au?"},
+  {"task_id":"extra-fact-2","prompt":"Who composed The Four Seasons?"},
+  {"task_id":"extra-fact-3","prompt":"Where is Machu Picchu located?"},
+  {"task_id":"extra-fact-4","prompt":"When did the Second World War end?"},
+  {"task_id":"extra-fact-5","prompt":"What gas do plants absorb from the atmosphere during photosynthesis?"}
+]

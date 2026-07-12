@@ -9,6 +9,8 @@ ENV PYTHONPATH=/app
 ENV MODEL_PATH=/models/gemma-4-E2B-it-Q4_K_M.gguf
 ENV ALLOWED_MODELS="minimax-m3,kimi-k2p7-code,gemma-4-31b-it,gemma-4-26b-a4b-it,gemma-4-31b-it-nvfp4"
 ENV CHEAPEST_MODEL="minimax-m3"
+ENV LOCAL_LLM=1
+ENV LOCAL_LLM_WAIT_READY=60
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \

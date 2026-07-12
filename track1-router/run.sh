@@ -3,7 +3,7 @@ set -euo pipefail
 
 MODEL_PATH="${MODEL_PATH:-/models/gemma-4-E2B-it-Q4_K_M.gguf}"
 
-if [[ "${LOCAL_LLM:-0}" != "0" && -f "$MODEL_PATH" && -x "$(command -v llama-server)" ]]; then
+if [[ "${LOCAL_LLM:-1}" != "0" && -f "$MODEL_PATH" && -x "$(command -v llama-server)" ]]; then
   llama-server -m "$MODEL_PATH" \
     -c "${LOCAL_LLM_CTX:-2048}" \
     --threads "${LOCAL_LLM_THREADS:-2}" \

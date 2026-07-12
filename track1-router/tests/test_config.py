@@ -6,6 +6,9 @@ from src import config
 
 
 class ConfigTest(unittest.TestCase):
+    def test_local_llm_defaults_cover_every_scored_category(self) -> None:
+        self.assertTrue(config.VALID_CATEGORIES - {"unknown"} <= set(config.LOCAL_LLM_CATEGORIES))
+
     def test_sentiment_fallback_is_honest_empty_answer(self) -> None:
         self.assertEqual(config.FALLBACK_ANSWERS["sentiment"], "")
 

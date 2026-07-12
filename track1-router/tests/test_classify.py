@@ -86,6 +86,38 @@ class ClassifyTest(unittest.TestCase):
             "factual knowledge",
         )
 
+    def test_broad_factual_question_forms_are_classified(self) -> None:
+        prompts = (
+            "Which scientist proposed the three laws of motion?",
+            "Who designed the analytical engine?",
+            "When was the first programmable computer completed?",
+            "Where does the Danube River begin?",
+            "What material conducts electricity with zero resistance at low temperatures?",
+        )
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertEqual(classify({"prompt": prompt}), "factual knowledge")
+
+    def test_broad_summarization_imperatives_are_classified(self) -> None:
+        prompts = (
+            "Provide a short summary of the passage: Bees pollinate many crops.",
+            "Give a concise overview of this article: The city expanded its rail network.",
+            "Condense the following paragraph into one sentence: Rust prevents many memory errors.",
+        )
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertEqual(classify({"prompt": prompt}), "summarization")
+
+    def test_broad_code_generation_imperatives_are_classified(self) -> None:
+        prompts = (
+            "Generate code that reverses a linked list.",
+            "Produce a Python function named median_value for a list of numbers.",
+            "Create code that groups records by department.",
+        )
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertEqual(classify({"prompt": prompt}), "code generation")
+
     def test_constraint_puzzle_is_logical_reasoning(self) -> None:
         prompt = (
             "Five friends sit in a row of seats. Ivy does not sit in seat 1, "

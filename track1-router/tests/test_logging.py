@@ -8,6 +8,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from src.fireworks_client import sanitize_error
 
@@ -42,7 +43,7 @@ class LoggingTest(unittest.TestCase):
                 importlib.reload(config)
                 importlib.reload(main)
                 stderr = io.StringIO()
-                with contextlib.redirect_stderr(stderr):
+                with contextlib.redirect_stderr(stderr), patch("src.cascade.get_solver", return_value=None):
                     self.assertEqual(main.main(), 0)
             finally:
                 for key, value in previous.items():
@@ -79,4 +80,3 @@ class LoggingTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

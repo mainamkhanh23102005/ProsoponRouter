@@ -7,6 +7,8 @@ too slow, or returns invalid output, the cascade continues to Fireworks.
 
 from __future__ import annotations
 
+import os
+import sys
 import time
 from typing import Any
 
@@ -20,7 +22,6 @@ from src.fireworks_client import (
     sanitize_error,
 )
 from src.task_utils import task_text
-from src.code_validation import iter_tests
 
 
 _STATE = {"ready": False, "fails": 0, "next_check": 0.0}
@@ -35,8 +36,6 @@ def can_attempt(task: dict[str, Any], category: str) -> bool:
     if not text or len(text) > config.LOCAL_LLM_MAX_PROMPT_CHARS:
         return False
     if category not in config.LOCAL_LLM_CATEGORIES:
-        return False
-    if category in {"code debugging", "code generation"} and not list(iter_tests(task)):
         return False
     return _healthy()
 
@@ -63,6 +62,8 @@ def complete(task: dict[str, Any], category: str) -> FireworksResult:
             completion_tokens=int(usage.get("completion_tokens", 0) or 0),
             error=content_error,
         )
+        if os.getenv("LOCAL_LLM_DEBUG") == "1":
+            print(f"local_llm_raw category={category} answer={content!r}", file=sys.stderr)
         _STATE["fails"] = 0 if not content_error else _STATE["fails"] + 1
         return result
     except Exception as exc:  # noqa: BLE001 - local rung must never break fallback.

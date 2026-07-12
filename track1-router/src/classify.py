@@ -47,7 +47,10 @@ def classify(task: dict[str, Any]) -> str:
             return category
 
     text = task_text(task).lower()
-    if re.search(r"\b(summarize|summary|tl;dr)\b", text):
+    if re.search(
+        r"\b(?:summari[sz]e|summari[sz]ation|summary|tl;dr|condense|synopsis|overview)\b",
+        text,
+    ):
         return "summarization"
     if re.search(r"\b(classify|label|determine|analyze)\b.{0,40}\bsentiment\b|\bsentiment\s+of\b", text):
         return "sentiment"
@@ -58,7 +61,11 @@ def classify(task: dict[str, Any]) -> str:
         return "ner"
     if re.search(r"\b(debug|find the bug|fix the bug|traceback|syntaxerror)\b", text):
         return "code debugging"
-    if re.search(r"\b(write|implement|create)\b.{0,40}\b(function|class|program|script)\b", text):
+    if re.search(
+        r"\b(?:write|implement|create|generate|produce|build|define)\b.{0,60}"
+        r"\b(?:python\s+)?(?:code|function|class|program|script|method|algorithm)\b",
+        text,
+    ):
         return "code generation"
     if re.search(
         r"\b(if all|therefore|must be|can be true|logic|each owns?|does not|do not|"
@@ -98,5 +105,7 @@ def classify(task: dict[str, Any]) -> str:
         r"difference between|name one|name a|name the)\b",
         text,
     ):
+        return "factual knowledge"
+    if re.search(r"(?:^|[.!?]\s+|:\s*)(?:who|what|which|when|where|why|how)\b[^?\n]*\??\s*$", text):
         return "factual knowledge"
     return "unknown"
