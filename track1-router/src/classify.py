@@ -10,6 +10,9 @@ from src.task_utils import task_text
 
 
 CATEGORY_ALIASES = {
+    "mathematical reasoning": "math",
+    "sentiment classification": "sentiment",
+    "text summarization": "summarization",
     "named entity recognition": "ner",
     "entity extraction": "ner",
     "entities": "ner",
@@ -71,6 +74,23 @@ def classify(task: dict[str, Any]) -> str:
         r"-?\d+(?:\.\d+)?.{0,12}\b(?:divided by|mod|minus|plus|times)\b.{0,12}-?\d|"
         r"\bmultiply by\s*-?\d",
         text,
+    ):
+        return "math"
+    if re.search(r"\b(?:starts? with|initially has?)\s+\d+", text) and re.search(
+        r"\b(?:per minute|per hour|drains?|refill(?:ed|s)?|liters?|kilograms?|dollars?)\b",
+        text,
+    ):
+        return "math"
+    if (
+        re.search(r"\bstarts? with\s+[\d,]+\s+units?", text)
+        and re.search(r"\bsells?\s+\d+(?:\.\d+)?%", text)
+        and re.search(r"\brestocks?\s+[\d,]+\s+units?", text)
+    ):
+        return "math"
+    if (
+        re.search(r"\brequires?\s+\d+\s*/\s*\d+\s+cups?", text)
+        and re.search(r"\bfor\s+\d+\s+cookies?", text)
+        and re.search(r"\$\d+(?:\.\d+)?\s+per\s+cup", text)
     ):
         return "math"
     if re.search(

@@ -3,3 +3,10 @@
 out/
 demo_app.py
 requirements-demo.txt
+live-demo/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+evaluation/
+tests/
+scripts/

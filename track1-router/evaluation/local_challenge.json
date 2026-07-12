@@ -1,0 +1,13 @@
+[
+  {"category":"math","prompt":"Calculate 7 + 5.","expected":"12"},
+  {"category":"math","prompt":"What is half of 18 minus 3?","expected":"6"},
+  {"category":"math","prompt":"A tank starts with 480 liters. It drains at 8 liters per minute for 15 minutes, then is refilled at 12 liters per minute for 20 minutes, then drains again at 5 liters per minute for 10 minutes. How many liters are in the tank now?","expected":"550"},
+  {"category":"sentiment","prompt":"Classify the sentiment: This is excellent, clear, and useful.","expected":"positive"},
+  {"category":"sentiment","prompt":"Classify the sentiment: This is terrible, broken, and awful.","expected":"negative"},
+  {"category":"sentiment","prompt":"Classify the sentiment: The meeting is Tuesday at 3pm.","expected":"neutral"},
+  {"category":"factual knowledge","prompt":"What is the capital of Vietnam?","expected":"Hanoi"},
+  {"category":"factual knowledge","prompt":"What is the capital of Australia?","expected":"Canberra"},
+  {"category":"logical reasoning","prompt":"If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?","expected":"Yes"},
+  {"category":"logical reasoning","prompt":"Ava, Ben, and Cara sit in a row of 3 seats numbered 1 to 3. Ava sits immediately before Ben. Cara does not sit in seat 1. Who sits in seat 1?","expected":"Ava"},
+  {"category":"ner","prompt":"Extract named entities from: Sarah Johnson met Microsoft in Seattle on 2026-07-11.","expected":"PERSON: Sarah Johnson; ORG: Microsoft; LOCATION: Seattle; DATE: 2026-07-11"}
+]

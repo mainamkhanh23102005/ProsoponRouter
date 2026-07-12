@@ -34,13 +34,7 @@ LOCAL_LLM_MODEL = os.getenv("LOCAL_LLM_MODEL", os.path.basename(os.getenv("MODEL
 LOCAL_LLM_CATEGORIES = _csv_env(
     "LOCAL_LLM_CATEGORIES",
     (
-        "math",
-        "ner",
-        "sentiment",
-        "summarization",
-        "factual knowledge",
         "code debugging",
-        "logical reasoning",
         "code generation",
     ),
 )
@@ -70,16 +64,17 @@ class CategoryPolicy:
     min_confidence: float = 0.90
     retry_on_invalid: bool = False
     stop: tuple[str, ...] = ()
+    reasoning_mode: str = "thinking_disabled"
 
 
 POLICY: dict[str, CategoryPolicy] = {
-    "math": CategoryPolicy(True, CHEAPEST_MODEL, 16, 0.95, stop=("\n",)),
-    "ner": CategoryPolicy(True, CHEAPEST_MODEL, 96, 0.90),
-    "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 80, 0.92),
+    "math": CategoryPolicy(True, CHEAPEST_MODEL, 144, 0.95),
+    "ner": CategoryPolicy(False, CHEAPEST_MODEL, 96, 0.90),
+    "sentiment": CategoryPolicy(True, CHEAPEST_MODEL, 80, 0.92, reasoning_mode="reasoning_none"),
     "summarization": CategoryPolicy(False, CHEAPEST_MODEL, 120),
-    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 120),
+    "factual knowledge": CategoryPolicy(False, CHEAPEST_MODEL, 200, 0.99),
     "code debugging": CategoryPolicy(False, CHEAPEST_MODEL, 260, retry_on_invalid=True),
-    "logical reasoning": CategoryPolicy(False, CHEAPEST_MODEL, 110),
+    "logical reasoning": CategoryPolicy(True, CHEAPEST_MODEL, 288, 0.99),
     "code generation": CategoryPolicy(False, CHEAPEST_MODEL, 420, retry_on_invalid=True),
     "unknown": CategoryPolicy(False, CHEAPEST_MODEL, 90),
 }

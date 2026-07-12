@@ -140,9 +140,12 @@ def build_payload(policy: config.CategoryPolicy, prompt: str) -> dict[str, Any]:
         "model": normalize_model_id(policy.model),
         "temperature": 0,
         "max_tokens": policy.max_tokens,
-        "thinking": {"type": "disabled"},
         "messages": [{"role": "user", "content": prompt}],
     }
+    if policy.reasoning_mode == "reasoning_none":
+        payload["reasoning_effort"] = "none"
+    else:
+        payload["thinking"] = {"type": "disabled"}
     if policy.stop:
         payload["stop"] = list(policy.stop)
     return payload
@@ -153,9 +156,15 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
     if category == "sentiment":
         return f"Answer with sentiment label and one-sentence justification only: positive|negative|neutral: reason\n{text}"
     if category == "math":
-        return f"Only final value.\n{text}"
+        return f"Compute one operation per line, no prose. Last line: Answer: include every requested result.\n{text}"
     if category == "ner":
-        return f"Extract PERSON/ORG/LOCATION/DATE. Output 'LABEL: text; ...' or NONE only.\n{text}"
+        return (
+            "Extract every PERSON/ORGANIZATION/LOCATION/DATE in order. "
+            "Keep compound organization names intact (e.g. ETH Zurich, not only ETH or Zurich). "
+            "Before finalizing, enumerate every named organization, person, location, and date; omit none. "
+            "Output only 'PERSON: name; ORGANIZATION: name; LOCATION: name; DATE: text' or NONE.\n"
+            f"{text}"
+        )
     if category == "summarization":
         return f"Follow the prompt's length/format instruction exactly. Output only the summary, no preamble.\n{text}"
     if category == "code debugging":
@@ -171,9 +180,13 @@ def build_prompt(task: dict[str, Any], category: str) -> str:
             f"{text}"
         )
     if category == "logical reasoning":
-        return f"Answer only with the final answer, no explanation.\n{text}"
+        return f"Use telegraphic deduction notes, no prose. Last line: Answer:\n{text}"
     if category == "factual knowledge":
-        return f"Answer all parts in one compact sentence using semicolons; include only the requested facts, no background, no markdown.\n{text}"
+        return (
+            "Answer every part in at most three concise sentences. For comparisons include relationship, "
+            "key properties or mechanism, and uses. No markdown.\n"
+            f"{text}"
+        )
     return f"Answer only.\n{text}"
 
 

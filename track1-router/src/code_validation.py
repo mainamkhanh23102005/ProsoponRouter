@@ -31,7 +31,12 @@ class ParsedCodeAnswer:
     self_checks: tuple[str, ...] = ()
 
 
-def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationResult:
+def validate_code_answer(
+    task: dict[str, Any],
+    answer: str,
+    *,
+    require_task_tests: bool = False,
+) -> CodeValidationResult:
     parsed = parse_code_answer(answer)
     code = parsed.code
     if not code:
@@ -61,6 +66,8 @@ def validate_code_answer(task: dict[str, Any], answer: str) -> CodeValidationRes
             return CodeValidationResult(False, code, combined_output(compile_result))
 
         tests = list(iter_tests(task))
+        if require_task_tests and not tests:
+            return CodeValidationResult(False, code, "local code requires task-owned semantic tests")
         if tests:
             for index, test in enumerate(tests):
                 result = run_test_case(temp_path, test, index)

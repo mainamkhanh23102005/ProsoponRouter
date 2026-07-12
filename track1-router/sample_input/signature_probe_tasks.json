@@ -1,0 +1,14 @@
+[
+  {
+    "task_id": "sig_probe_1",
+    "prompt": "Fix the bug in this function so it correctly returns the sum of even numbers only:\n\ndef sum_evens(nums):\n    total = 0\n    for n in nums:\n        if n % 2 == 1:\n            total += n\n    return total\n\nReturn only the corrected function."
+  },
+  {
+    "task_id": "sig_probe_2",
+    "prompt": "This function is supposed to reverse a string without using slicing or built-in reverse. Fix it:\n\ndef reverse_str(s):\n    result = ''\n    for i in range(len(s)):\n        result = result + s[i]\n    return result\n\nReturn only the corrected function, keep the exact function name and signature."
+  },
+  {
+    "task_id": "sig_probe_3",
+    "prompt": "Debug this closure-based counter factory so each call to the returned function increments independently:\n\ndef make_counter():\n    count = 0\n    def counter():\n        count += 1\n        return count\n    return counter\n\nReturn only the corrected code."
+  }
+]

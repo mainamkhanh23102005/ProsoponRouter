@@ -9,6 +9,18 @@ class ClassifyTest(unittest.TestCase):
     def test_explicit_category_wins(self) -> None:
         self.assertEqual(classify({"category": "sentiment", "text": "What is 2 + 2?"}), "sentiment")
 
+    def test_official_category_names_are_normalized(self) -> None:
+        cases = {
+            "factual_knowledge": "factual knowledge",
+            "mathematical_reasoning": "math",
+            "sentiment_classification": "sentiment",
+            "text_summarization": "summarization",
+            "named_entity_recognition": "ner",
+        }
+        for official, internal in cases.items():
+            with self.subTest(category=official):
+                self.assertEqual(classify({"category": official, "prompt": "ambiguous"}), internal)
+
     def test_positive_word_alone_is_not_sentiment(self) -> None:
         self.assertEqual(classify({"text": "The word positive appears in this sentence."}), "unknown")
 
@@ -24,8 +36,30 @@ class ClassifyTest(unittest.TestCase):
     def test_math_request_is_classified(self) -> None:
         self.assertEqual(classify({"text": "Calculate 7 + 5 for the total."}), "math")
 
+    def test_multistep_word_problem_is_classified_as_math(self) -> None:
+        prompt = (
+            "A tank starts with 480 liters. It drains at 8 liters per minute for 15 minutes, "
+            "then is refilled at 12 liters per minute for 20 minutes, then drains again at "
+            "5 liters per minute for 10 minutes. How many liters are in the tank now?"
+        )
+        self.assertEqual(classify({"prompt": prompt}), "math")
+
     def test_natural_language_math_request_is_not_stolen_by_factual_rule(self) -> None:
         self.assertEqual(classify({"text": "What is half of 18 minus 3?"}), "math")
+
+    def test_inventory_percentage_word_problem_is_math(self) -> None:
+        self.assertEqual(
+            classify({"prompt": "A warehouse starts with 2,400 units, sells 37% of stock, "
+                    "restocks 800 units, and sells 640 units. How many units remain?"}),
+            "math",
+        )
+
+    def test_recipe_scaling_and_cost_word_problem_is_math(self) -> None:
+        self.assertEqual(
+            classify({"prompt": "A recipe requires 3/4 cup for 12 cookies. How much is needed "
+                    "for 30 cookies if it costs $2.40 per cup?"}),
+            "math",
+        )
 
     def test_schedule_times_question_is_not_math(self) -> None:
         self.assertNotEqual(classify({"prompt": "What times are available on July 11?"}), "math")

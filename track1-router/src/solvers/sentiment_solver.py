@@ -22,6 +22,23 @@ NEUTRAL_FACTUAL = {
     "sunday",
 }
 
+NEGATIVE_DETAILS = {
+    "damaged": "damaged packaging",
+    "dented": "dented box",
+    "missing": "missing item",
+    "late": "late delivery",
+    "broken": "broken product",
+    "terrible": "terrible experience",
+}
+POSITIVE_DETAILS = {
+    "flawless": "flawless device",
+    "perfectly": "working perfectly",
+    "resolved": "resolved complaint",
+    "convenient": "convenient setup",
+    "excellent": "excellent result",
+    "great": "great result",
+}
+
 
 def solve(task: dict[str, Any]) -> tuple[str | None, float]:
     text = task_text(task)
@@ -59,6 +76,18 @@ def rule_based_sentiment(text: str) -> tuple[str | None, float] | None:
         return "positive: negation phrase 'not bad' flips negative word 'bad'", 0.94
     if "not good" in lowered and pos == 1 and neg == 0:
         return "negative: negation phrase 'not good' flips positive word 'good'", 0.94
+
+    negative_details = detected_details(lowered, NEGATIVE_DETAILS)
+    positive_details = detected_details(lowered, POSITIVE_DETAILS)
+    if negative_details and positive_details:
+        tail = lowered.rsplit("but", 1)[-1] if "but" in words else ""
+        if "flawless" in tail:
+            return (
+                f"positive: despite the {negative_details[0]}, the positive outcome is a "
+                f"{positive_details[0]}",
+                0.96,
+            )
+        return None, 0.0
     if pos and neg:
         return None, 0.0
     if "another bug" in lowered and pos:
@@ -70,6 +99,10 @@ def rule_based_sentiment(text: str) -> tuple[str | None, float] | None:
             return neutral_evidence(text), 0.93
         return None, 0.0
     return None
+
+
+def detected_details(text: str, vocabulary: dict[str, str]) -> list[str]:
+    return [description for word, description in vocabulary.items() if re.search(rf"\b{word}\b", text)]
 
 
 def looks_like_factual_neutral(text: str, words: set[str]) -> bool:

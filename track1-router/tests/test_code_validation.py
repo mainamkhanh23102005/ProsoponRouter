@@ -104,6 +104,15 @@ class CodeValidationTest(unittest.TestCase):
         result = validate_code_answer({}, "def add(a, b):\n    return a - b")
         self.assertTrue(result.ok)
 
+    def test_local_acceptance_requires_task_owned_semantic_tests(self) -> None:
+        result = validate_code_answer(
+            {"prompt": "Write a Python function `add(a, b)`."},
+            "def add(a, b):\n    return a - b\n\n# SELF_CHECK:\nassert add(2, 3) == -1",
+            require_task_tests=True,
+        )
+        self.assertFalse(result.ok)
+        self.assertIn("task-owned semantic tests", result.error or "")
+
     def test_malformed_self_check_block_falls_back_to_compile_only(self) -> None:
         parsed = parse_code_answer("def add(a, b):\n    return a - b\n\n# SELF_CHECK:\nadd(2, 3) == 5")
         self.assertEqual(parsed.self_checks, ())

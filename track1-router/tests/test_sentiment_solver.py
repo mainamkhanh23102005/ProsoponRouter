@@ -61,6 +61,29 @@ class SentimentSolverTest(unittest.TestCase):
     def test_mixed_real_magnitude_declines(self) -> None:
         self.assert_declines("Great acting but terrible pacing and a boring ending")
 
+    def test_strong_positive_outcome_after_minor_damage(self) -> None:
+        answer, confidence = sentiment_solver.solve({
+            "text": "Box was dented and the manual was missing, but honestly the device "
+                    "itself is flawless and set up in under 5 minutes."
+        })
+
+        self.assertIsNotNone(answer)
+        self.assertTrue(answer.startswith("positive: "), answer)
+        self.assertRegex(answer.lower(), r"dented|missing")
+        self.assertIn("flawless", answer.lower())
+        self.assertGreaterEqual(confidence, 0.92)
+
+    def test_unhandled_mixed_signals_decline_instead_of_giving_one_sided_reason(self) -> None:
+        self.assert_declines(
+            "The delivery was damaged, but setup was convenient."
+        )
+
+    def test_balanced_problem_and_resolution_still_declines(self) -> None:
+        self.assert_declines(
+            "The product arrived late and packaging was damaged, but the item worked "
+            "perfectly and support resolved my complaint."
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

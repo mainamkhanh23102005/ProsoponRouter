@@ -64,6 +64,36 @@ class MathSolverTest(unittest.TestCase):
     def test_percent_symbol_modulo(self) -> None:
         self.assert_answer("Calculate 45 % 6.", "3")
 
+    def test_tank_rate_word_problem(self) -> None:
+        self.assert_answer(
+            "A tank starts with 480 liters. It drains at 8 liters per minute for 15 minutes, "
+            "then is refilled at 12 liters per minute for 20 minutes, then drains again at "
+            "5 liters per minute for 10 minutes. How many liters are in the tank now?",
+            "550",
+        )
+
+    def test_fraction_inside_multistep_word_problem_declines(self) -> None:
+        self.assert_declines(
+            "Paul has 52 marbles. His friend gave him 28 marbles. Then, he lost "
+            "1/4 of his marbles. How many marbles does Paul have left?"
+        )
+
+    def test_inventory_percent_restock_sequence(self) -> None:
+        self.assert_answer(
+            "A warehouse starts with 2,400 units. In Q1 it sells 37% of stock. "
+            "In Q2 it restocks 800 units. In Q3 it sells 640 units. "
+            "How many units remain at the end of Q3?",
+            "1672",
+        )
+
+    def test_recipe_scaling_with_cost_returns_both_requested_values(self) -> None:
+        self.assert_answer(
+            "A recipe requires 3/4 cup of sugar for 12 cookies. How much sugar is needed "
+            "for 30 cookies? If sugar costs $2.40 per cup, what is the total cost of sugar "
+            "for 30 cookies?",
+            "1.875 cups; $4.50",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

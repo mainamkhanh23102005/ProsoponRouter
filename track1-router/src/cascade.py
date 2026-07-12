@@ -42,7 +42,9 @@ def route_task(task: dict[str, Any], category: str) -> tuple[Any, dict[str, Any]
     local_error = None
     if local_llm.can_attempt(task, category):
         local_result = local_llm.complete(task, category)
-        local_ok, local_answer, local_failure_feedback = validate_model_answer(task, category, local_result.answer)
+        local_ok, local_answer, local_failure_feedback = validate_model_answer(
+            task, category, local_result.answer, local_candidate=True
+        )
         if local_ok:
             return local_answer, {
                 "path": "local_llm",
@@ -95,7 +97,13 @@ def is_empty_content_error(error: str | None) -> bool:
     return bool(error and error.startswith("empty content, message keys were:"))
 
 
-def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> tuple[bool, Any, str | None]:
+def validate_model_answer(
+    task: dict[str, Any],
+    category: str,
+    answer: Any,
+    *,
+    local_candidate: bool = False,
+) -> tuple[bool, Any, str | None]:
     if answer is None:
         return False, answer, None
     answer = normalize_model_answer(category, answer)
@@ -104,15 +112,22 @@ def validate_model_answer(task: dict[str, Any], category: str, answer: Any) -> t
     if not validate_answer(category, answer):
         return False, answer, f"expected {category} answer format; got {answer!r}"
     if category in {"code debugging", "code generation"}:
-        validation = validate_code_answer(task, str(answer))
+        validation = validate_code_answer(task, str(answer), require_task_tests=local_candidate)
         if not validation.ok:
             return False, answer, validation.error
         return True, validation.code, None
+    if local_candidate:
+        return False, answer, f"local {category} answer is not independently verifiable"
     return True, answer, None
 
 
 def normalize_model_answer(category: str, answer: Any) -> Any:
-    if category != "sentiment" or not isinstance(answer, str):
+    if not isinstance(answer, str):
+        return answer
+    if category in {"math", "logical reasoning"}:
+        match = re.search(r"(?:^|\n)\s*Answer:\s*(.+?)\s*$", answer, re.IGNORECASE)
+        return match.group(1).strip() if match else answer
+    if category != "sentiment":
         return answer
     match = re.match(r"^\s*(positive|negative|neutral)\b\s*(?::|-)?\s*(.*)$", answer, re.IGNORECASE | re.S)
     if not match:
@@ -167,6 +182,8 @@ def has_truncated_reasoning_shape(lowered: str) -> bool:
     stripped = lowered.rstrip()
     if not stripped:
         return False
+    if len(stripped.split()) <= 2:
+        return False
     if re.search(r"\b(therefore|because|and|or|so|then|but|with|from|to|the|a|an)\s*$", stripped):
         return True
     if re.search(r"[:;,]\s*$", stripped):
@@ -183,8 +200,4 @@ def is_too_long_for_final_answer(category: str, answer: str) -> bool:
         return len(words) > 24 or len(lines) > 2
     if category == "math":
         return len(words) > 12 or len(lines) > 1
-    if category == "sentiment":
-        return len(words) > 40 or len(lines) > 3
-    if category == "factual knowledge":
-        return len(words) > 80 or len(lines) > 4
     return False

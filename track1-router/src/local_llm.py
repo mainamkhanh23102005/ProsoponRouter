@@ -20,6 +20,7 @@ from src.fireworks_client import (
     sanitize_error,
 )
 from src.task_utils import task_text
+from src.code_validation import iter_tests
 
 
 _STATE = {"ready": False, "fails": 0, "next_check": 0.0}
@@ -34,6 +35,8 @@ def can_attempt(task: dict[str, Any], category: str) -> bool:
     if not text or len(text) > config.LOCAL_LLM_MAX_PROMPT_CHARS:
         return False
     if category not in config.LOCAL_LLM_CATEGORIES:
+        return False
+    if category in {"code debugging", "code generation"} and not list(iter_tests(task)):
         return False
     return _healthy()
 
